@@ -28,5 +28,4 @@ COPY env.properties /config/application-secret.properties
 COPY rds.yaml /config/rds.yaml
 
 # 8. Spring Boot 애플리케이션 실행
-ENTRYPOINT ["java", "-jar", "/app.jar",
-    "--spring.config.additional-location=/config/application-secret.properties,/config/rds.yaml"]
+ENTRYPOINT ["java", "-jar", "/app.jar", "--spring.config.additional-location=/config/application-secret.properties", "--spring.config.additional-location=/config/rds.yaml"]
