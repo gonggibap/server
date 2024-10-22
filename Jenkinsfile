@@ -62,8 +62,8 @@ pipeline {
                                     docker pull ${DOCKER_HUB_REPO}:latest
                                     docker stop server || true
                                     docker rm server || true
-                                    docker ps --filter "publish=8081" --format "{{.ID}}" | xargs -r docker stop
-                                    docker ps --filter "publish=8081" --format "{{.ID}}" | xargs -r docker rm
+                                    docker ps --filter "publish=8080" --format "{{.ID}}" | xargs -r docker stop
+                                    docker ps --filter "publish=8080" --format "{{.ID}}" | xargs -r docker rm
                                     docker run -d --name server --network ${NETWORK_NAME} -p 8081:8081 ${DOCKER_HUB_REPO}:latest
                                 """,
                                 remoteDirectory: '/home/ubuntu',
