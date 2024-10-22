@@ -23,6 +23,14 @@ public class RestaurantController {
 
     private final RestaurantService restaurantService;
 
+    /**
+     * 범위 내 식당 조회
+     * 조회 시 방문수 내림차순 정렬
+     * @param latitudes
+     * @param longitudes
+     * @param pageable
+     * @return RestaurantPageResponse response
+     */
     @GetMapping()
     public ResponseEntity<?> getRestaurant(@RequestParam List<BigDecimal> latitudes,
                                                         @RequestParam List<BigDecimal> longitudes,
