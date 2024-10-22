@@ -30,7 +30,7 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                configFileProvider([configFile(fileId: 'e4f42108-949c-491b-a2d4-6a9f76d55e0c', targetLocation: 'config/env.properties')]) {
+                configFileProvider([configFile(fileId: 'e4f42108-949c-491b-a2d4-6a9f76d55e0c', targetLocation: 'env.properties')]) {
                     script {
                         // config/env.properties 파일을 Docker 빌드에 포함시킵니다.
                         def app = docker.build("${DOCKER_HUB_REPO}:latest", ".")
