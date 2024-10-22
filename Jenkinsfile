@@ -20,24 +20,19 @@ pipeline {
             }
         }
 
-        stage('Build JAR') {
-            steps {
-                sh 'chmod +x ./gradlew'
-                sh './gradlew build'
-                sh 'ls -la build/libs/'
-            }
-        }
-
         stage('Build Docker Image') {
             steps {
-                script {
-                    def app = docker.build("${DOCKER_HUB_REPO}:latest", ".")
-
+                configFileProvider([
+                    configFile(fileId: 'e4f42108-949c-491b-a2d4-6a9f76d55e0c', targetLocation: 'env.properties'),  // 첫 번째 파일
+                    configFile(fileId: 'b60dd942-c441-46c3-a590-5b42d69e3433', targetLocation: 'rds.yaml')      // 두 번째 파일
+                ]) {
+                    script {
+                        // config/env.properties 파일을 Docker 빌드에 포함시킵니다.
+                        def app = docker.build("${DOCKER_HUB_REPO}:latest", ".")
+                    }
                 }
             }
         }
-
-
 
         stage('Push to Docker Hub') {
             steps {
@@ -54,19 +49,19 @@ pipeline {
             steps {
                 sshPublisher(publishers: [
                     sshPublisherDesc(
-                        configName: 'ubuntu', // Jenkins SSH 서버 설정 이름
+                        configName: 'ubuntu',
                         transfers: [
                             sshTransfer(
-                                sourceFiles: '', // 파일 전송이 필요 없으므로 빈 문자열
+                                sourceFiles: '',
                                 execCommand: """
                                     docker pull ${DOCKER_HUB_REPO}:latest
                                     docker stop server || true
                                     docker rm server || true
-                                    docker ps --filter "publish=8081" --format "{{.ID}}" | xargs -r docker stop
-                                    docker ps --filter "publish=8081" --format "{{.ID}}" | xargs -r docker rm
-                                    docker run -d --name server --network ${NETWORK_NAME} -p 8081:8081 ${DOCKER_HUB_REPO}:latest
+                                    docker ps --filter "publish=8080" --format "{{.ID}}" | xargs -r docker stop
+                                    docker ps --filter "publish=8080" --format "{{.ID}}" | xargs -r docker rm
+                                    docker run -d --name server --network ${NETWORK_NAME} -p 8080:8080 ${DOCKER_HUB_REPO}:latest
                                 """,
-                                remoteDirectory: '/home/ubuntu', // 원격 디렉토리
+                                remoteDirectory: '/home/ubuntu',
                                 removePrefix: ''
                             )
                         ],
@@ -77,6 +72,7 @@ pipeline {
                 ])
             }
         }
+
 
         stage('Update GitLab Repository') {
             steps {

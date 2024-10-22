@@ -1,10 +1,10 @@
-package kr.kro.ddalkak.gonggibap;
+package kr.kro.gonggibap;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class GonggibapApplicationTests {
+public class GonggibapApplicationTests {
 
     @Test
     void contextLoads() {
