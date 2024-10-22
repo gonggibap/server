@@ -24,11 +24,11 @@ public class RestaurantService {
     public RestaurantPageResponse getRestaurant(List<BigDecimal> latitudes, List<BigDecimal> longitudes, Pageable pageable) {
 
         StringBuilder polygon = new StringBuilder("POLYGON((");
-        polygon.append(longitudes.get(0)).append(" ").append(latitudes.get(0)).append(", ")
-                .append(longitudes.get(1)).append(" ").append(latitudes.get(1)).append(", ")
-                .append(longitudes.get(2)).append(" ").append(latitudes.get(2)).append(", ")
-                .append(longitudes.get(3)).append(" ").append(latitudes.get(3)).append(", ")
-                .append(longitudes.get(0)).append(" ").append(latitudes.get(0)).append("))");
+        polygon.append(latitudes.get(0)).append(" ").append(longitudes.get(0)).append(", ")
+                .append(latitudes.get(1)).append(" ").append(longitudes.get(1)).append(", ")
+                .append(latitudes.get(2)).append(" ").append(longitudes.get(2)).append(", ")
+                .append(latitudes.get(3)).append(" ").append(longitudes.get(3)).append(", ")
+                .append(latitudes.get(0)).append(" ").append(longitudes.get(0)).append("))");
 
         log.info("지도 조회 POLYGON 검색 범위 : {}", polygon);
 
