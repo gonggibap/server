@@ -20,14 +20,6 @@ pipeline {
             }
         }
 
-        stage('Build JAR') {
-            steps {
-                sh 'chmod +x ./gradlew'
-                sh './gradlew build'
-                sh 'ls -la build/libs/'
-            }
-        }
-
         stage('Build Docker Image') {
             steps {
                 configFileProvider([configFile(fileId: 'e4f42108-949c-491b-a2d4-6a9f76d55e0c', targetLocation: 'env.properties')]) {
