@@ -30,7 +30,7 @@ public enum ErrorCode {
     NOT_EXISTS_FOLLOW(HttpStatus.UNAUTHORIZED, HttpStatus.UNAUTHORIZED.value(), "해당하는 팔로잉 관계가 없습니다.")
     ;
 
-    private final HttpStatus httpStatus;
+    private final HttpStatus status;
     private final Integer statusCode;
     private final String message;
 

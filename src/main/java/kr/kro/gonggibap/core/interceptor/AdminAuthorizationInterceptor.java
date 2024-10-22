@@ -5,7 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import kr.kro.gonggibap.core.config.jwt.TokenProvider;
 import kr.kro.gonggibap.core.error.ErrorCode;
-import kr.kro.gonggibap.core.exception.BusinessException;
+import kr.kro.gonggibap.core.exception.CustomException;
 import kr.kro.gonggibap.domain.user.entity.UserRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -30,7 +30,7 @@ public class AdminAuthorizationInterceptor implements HandlerInterceptor {
         String role = (String) claims.get("role");
 
         if (!UserRole.isUserRole(role))
-            throw new BusinessException(ErrorCode.FORBIDDEN_ADMIN);
+            throw new CustomException(ErrorCode.FORBIDDEN_ADMIN);
 
         return true;
     }

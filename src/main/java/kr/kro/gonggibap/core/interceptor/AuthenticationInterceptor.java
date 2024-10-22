@@ -6,7 +6,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import kr.kro.gonggibap.core.config.jwt.TokenProvider;
 import kr.kro.gonggibap.core.config.jwt.constant.TokenType;
 import kr.kro.gonggibap.core.error.ErrorCode;
-import kr.kro.gonggibap.core.exception.BusinessException;
+import kr.kro.gonggibap.core.exception.CustomException;
 import kr.kro.gonggibap.core.util.AuthorizationUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -34,7 +34,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
         String tokenType = claims.getSubject();
 
         if (!TokenType.isAccessToken(tokenType))
-            throw new BusinessException(ErrorCode.NOT_ACCESS_TOKEN_TYPE);
+            throw new CustomException(ErrorCode.NOT_ACCESS_TOKEN_TYPE);
 
         return true;
     }

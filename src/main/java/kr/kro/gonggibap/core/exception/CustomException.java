@@ -4,10 +4,10 @@ import kr.kro.gonggibap.core.error.ErrorCode;
 import lombok.Getter;
 
 @Getter
-public class BusinessException extends RuntimeException {
+public class CustomException extends RuntimeException {
     private final ErrorCode errorCode;
 
-    public BusinessException(final ErrorCode errorCode) {
+    public CustomException(final ErrorCode errorCode) {
         super(errorCode.getMessage());
         this.errorCode = errorCode;
     }
