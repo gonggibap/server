@@ -1,6 +1,8 @@
 spring:
   application:
     name: gonggibap
+  profiles:
+    include: secret
 
 server:
   port: 8080
