@@ -7,7 +7,7 @@ COPY build.gradle settings.gradle /app/
 RUN gradle dependencies --no-daemon || true
 
 # 나머지 프로젝트 파일 복사
-COPY ../dafs ./
+COPY . .
 RUN gradle clean build --no-daemon --stacktrace
 
 # 최종 이미지 설정
