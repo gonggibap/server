@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/history")
+@RequestMapping("/api/histories")
 public class HistoryController {
 
     private final HistoryService historyService;

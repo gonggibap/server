@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/public-office")
+@RequestMapping("/api/public-offices")
 public class PublicOfficeController {
 
     private final PublicOfficeService publicOfficeService;
