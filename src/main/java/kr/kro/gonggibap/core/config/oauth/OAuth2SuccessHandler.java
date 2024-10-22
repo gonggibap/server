@@ -32,6 +32,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     // 로그인 성공 이후 SimpleUrlAuthenticationSuccessHandler 사용한다.
 
     public static final String REFRESH_TOKEN_COOKIE_NAME = "refresh_token";
+    public static final String ACCESS_TOKEN_COOKIE_NAME = "access_token";
     public static final Duration REFRESH_TOKEN_DURATION = Duration.ofDays(14);
     public static final Duration ACCESS_TOKEN_DURATION = Duration.ofDays(30);
 
@@ -76,11 +77,16 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String refreshToken = refreshTokenDetails.token();
         // 데이터 베이스에 유저아이디와 리프레시 토큰을 저장
         //saveRefreshToken(user, refreshToken);
+
         // 클라이언트에서 액세스 토큰이 만료되면 재발급 요청하도록 쿠키에 리프레시 토큰을 저장
         addRefreshTokenToCookie(request, response, refreshToken);       // 2. 액세스 토큰 생성 -> 패스에 액세스 토큰을 추가
+
         // 토큰 제공자를 사용해 액세스 토큰을 만든 뒤
         TokenDetails accessTokenDetails = tokenProvider.generateToken(user, ACCESS_TOKEN_DURATION, TokenType.ACCESS);
         String accessToken = accessTokenDetails.token();
+
+        // 쿠키에 액세스 토큰을 저장
+        addAccessTokenToCookie(request, response, accessToken);
 
         // 쿠키에서 리다이렉트 경로가 담긴 값을 가져와 쿼리파라미터에 액세스 토큰을 추가함
         String targetUrl = getTargetUrl(
@@ -102,13 +108,13 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
                 .setAuthentication(authentication);
 
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
+    }
 
-//
-//        log.info("response: {}", responseTokenDto);
-//
-//        response.setStatus(HttpStatus.OK.value());
-//        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-//        response.getWriter().write(objectMapper.writeValueAsString(responseTokenDto));
+    private void addAccessTokenToCookie(HttpServletRequest request, HttpServletResponse response, String accessToken) {
+        int cookieMaxAge = (int) ACCESS_TOKEN_DURATION.toSeconds();
+
+        CookieUtil.deleteCookie(request, response, ACCESS_TOKEN_COOKIE_NAME);
+        CookieUtil.addCookie(response, ACCESS_TOKEN_COOKIE_NAME, accessToken, cookieMaxAge);
     }
 
     // 생성된 리프레시 토큰을 쿠키에 저장
