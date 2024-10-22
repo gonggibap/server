@@ -22,7 +22,10 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                configFileProvider([configFile(fileId: 'e4f42108-949c-491b-a2d4-6a9f76d55e0c', targetLocation: 'env.properties')]) {
+                configFileProvider([
+                    configFile(fileId: 'e4f42108-949c-491b-a2d4-6a9f76d55e0c', targetLocation: 'env.properties'),  // 첫 번째 파일
+                    configFile(fileId: 'b60dd942-c441-46c3-a590-5b42d69e3433', targetLocation: 'rds.yaml')      // 두 번째 파일
+                ]) {
                     script {
                         // config/env.properties 파일을 Docker 빌드에 포함시킵니다.
                         def app = docker.build("${DOCKER_HUB_REPO}:latest", ".")

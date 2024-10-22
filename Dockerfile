@@ -25,6 +25,8 @@ COPY --from=build /app/build/libs/gonggibap-0.0.1-SNAPSHOT.jar app.jar
 
 # 7. 환경 파일을 복사 (최종 이미지를 위한 설정 파일 복사)
 COPY env.properties /config/application-secret.properties
+COPY rds.yaml /config/rds.yaml
 
 # 8. Spring Boot 애플리케이션 실행
-ENTRYPOINT ["java", "-jar", "/app.jar", "--spring.config.additional-location=/config/application-secret.properties"]
+ENTRYPOINT ["java", "-jar", "/app.jar",
+    "--spring.config.additional-location=/config/application-secret.properties,/config/rds.yaml"]
