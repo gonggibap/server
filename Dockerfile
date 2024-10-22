@@ -17,7 +17,7 @@ FROM openjdk:17-slim
 COPY --from=build /app/build/libs/gonggibap-0.0.1-SNAPSHOT.jar app.jar
 
 # config 파일을 프로젝트의 src/resources/로 복사
-COPY env.properties /app/src/resources/application-secret.properties
+COPY env.properties /app/src/main/resources/application-secret.properties
 
 # Spring Boot 실행
 ENTRYPOINT ["java", "-jar", "/app.jar"]
