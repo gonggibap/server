@@ -10,6 +10,7 @@ import kr.kro.gonggibap.domain.user.dto.CustomOAuth2User;
 import kr.kro.gonggibap.domain.user.dto.TokenDetails;
 import kr.kro.gonggibap.domain.user.entity.User;
 import kr.kro.gonggibap.domain.user.service.UserService;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,7 +26,6 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 
 @Component
-@RequiredArgsConstructor
 @Slf4j
 public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
@@ -38,12 +38,21 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     public static final Duration ACCESS_TOKEN_DURATION = Duration.ofDays(30);
 
     // 로그인 성공 시 리다이렉트 페이지
-    @Value("${auth.redirect-path}")
-    public String REDIRECT_PATH;
-
+    private final String redirectPath;
     private final TokenProvider tokenProvider;
     private final OAuth2AuthorizationRequestBasedOnCookieRepository authorizationRequestRepository;
     private final UserService userService;
+
+    public OAuth2SuccessHandler(
+            TokenProvider tokenProvider,
+            OAuth2AuthorizationRequestBasedOnCookieRepository authorizationRequestRepository,
+            UserService userService,
+            @Value("${auth.redirect-path}") String redirectPath) {
+        this.tokenProvider = tokenProvider;
+        this.authorizationRequestRepository = authorizationRequestRepository;
+        this.userService = userService;
+        this.redirectPath = redirectPath;
+    }
 
     // 성공적으로 로그인 하는 경우에 토큰과 관련된 작업을 추가로 처리하기 위해 오버라이드함
 //    @Override
@@ -135,7 +144,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
     // 액세스 토큰을 패스에 추가
     private String getTargetUrl(String accessToken, LocalDateTime accessTokenExpireTime, String refreshToken, LocalDateTime refreshTokenExpireTime) {
-        return UriComponentsBuilder.fromUriString(REDIRECT_PATH)
+        return UriComponentsBuilder.fromUriString(redirectPath)
                 .queryParam("accessToken", accessToken)
                 .queryParam("accessTokenExpireTime", accessTokenExpireTime)
                 .queryParam("refreshToken", refreshToken)

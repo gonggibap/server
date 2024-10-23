@@ -8,6 +8,7 @@ import kr.kro.gonggibap.core.filter.TokenAuthenticationFilter;
 import kr.kro.gonggibap.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -33,6 +34,9 @@ public class WebOAuthSecurityConfig {
     private final OAuth2UserCustomService oAuth2UserCustomService;
     private final TokenProvider tokenProvider;
     private final UserService userService;
+
+    @Value("${auth.redirect-path}")
+    private String redirectPath;
 
     // 스프링 시큐리티 기능 비활성화
     @Bean
@@ -99,11 +103,13 @@ public class WebOAuthSecurityConfig {
         };
     }
 
-    //@Bean
+    @Bean
     public OAuth2SuccessHandler oAuth2SuccessHandler() {
-        return new OAuth2SuccessHandler(tokenProvider,
+        return new OAuth2SuccessHandler(
+                tokenProvider,
                 oAuth2AuthorizationRequestBasedOnCookieRepository(),
-                userService
+                userService,
+                redirectPath
         );
     }
 
