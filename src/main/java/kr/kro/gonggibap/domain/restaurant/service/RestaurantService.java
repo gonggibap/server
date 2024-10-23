@@ -24,6 +24,7 @@ import static kr.kro.gonggibap.core.error.ErrorCode.*;
 @Service
 public class RestaurantService {
 
+
     private final RestaurantRepository restaurantRepository;
 
     public RestaurantPageResponse getRestaurant(List<BigDecimal> latitudes, List<BigDecimal> longitudes, Pageable pageable) {
