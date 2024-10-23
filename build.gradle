@@ -48,6 +48,11 @@ dependencies {
     implementation 'org.hibernate.orm:hibernate-spatial:6.4.4.Final'
     implementation 'com.querydsl:querydsl-spatial'
 
+    // 프로메테우스 메트릭 수집
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'io.micrometer:micrometer-registry-prometheus'
+
+
 }
 
 tasks.named('test') {
