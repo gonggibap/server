@@ -92,8 +92,7 @@ public class RestaurantService {
     }
 
     /**
-     * 사용자의 검색어 중에서 구와 음식을 분리
-     * (ex. 강남 칼국수 => district = '강남구', food = '칼국수'
+     * 들어온 단어가 지역구인지 찾아주는 메소드
      * @param word : 사용자 검색어 split한 단어
      * @return word에 대해 찾은 지역구, nullable
      */
