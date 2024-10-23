@@ -1,20 +1,31 @@
-# Gradle 이미지를 사용합니다.
+# 1. Gradle 이미지를 사용하여 빌드
 FROM gradle:7.5.1-jdk-alpine AS build
-# 작업 디렉토리를 설정합니다.
 WORKDIR /app
-# Gradle 캐시를 활용하기 위해 필요한 파일만 먼저 복사합니다.
+
+# 2. Gradle 파일을 복사하여 의존성 다운로드
 COPY build.gradle settings.gradle /app/
-# 종속성을 다운로드합니다.
 RUN gradle dependencies --no-daemon || true
-# 나머지 프로젝트 파일들을 복사합니다.
-COPY ../dafs .
-# Gradle 빌드를 실행하여 애플리케이션을 빌드합니다.
+
+# 3. 환경 파일 및 소스 파일 복사
+# env.properties 파일을 복사하여 빌드에 포함
+COPY env.properties /app/src/main/resources/application-secret.properties
+COPY env.properties /app/src/test/resources/application-secret.properties
+
+# 나머지 프로젝트 파일 복사
+COPY . .
+
+# 4. Gradle 빌드 실행
 RUN gradle clean build --no-daemon --stacktrace
-# 최종 이미지를 설정합니다.
+
+# 5. 최종 이미지를 위한 OpenJDK
 FROM openjdk:17-slim
 
-
-# 빌드된 jar 파일을 Docker 이미지에 복사합니다.
+# 6. 빌드된 jar 파일 복사
 COPY --from=build /app/build/libs/gonggibap-0.0.1-SNAPSHOT.jar app.jar
-# 애플리케이션을 실행합니다.
-ENTRYPOINT ["java", "-jar", "/app.jar"]
+
+# 7. 환경 파일을 복사 (최종 이미지를 위한 설정 파일 복사)
+COPY env.properties /config/application-secret.properties
+COPY rds.yaml /config/rds.yaml
+
+# 8. Spring Boot 애플리케이션 실행
+ENTRYPOINT ["java", "-jar", "/app.jar", "--spring.config.additional-location=/config/application-secret.properties", "--spring.config.additional-location=/config/rds.yaml"]

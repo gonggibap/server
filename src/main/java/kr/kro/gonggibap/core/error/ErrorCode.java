@@ -26,6 +26,11 @@ public enum ErrorCode {
     USER_NOT_EXISTS(         HttpStatus.NOT_FOUND,       HttpStatus.NOT_FOUND.value(), "해당 회원은 존재하지 않습니다."),
     NOT_EXISTS_EMAIL(        HttpStatus.NOT_FOUND,       HttpStatus.NOT_FOUND.value(), "일치하는 Email 정보가 존재하지 않습니다."),
     NOT_AUTHORIZATION(       HttpStatus.UNAUTHORIZED,    HttpStatus.UNAUTHORIZED.value(), "해당 권한이 없는 사용자입니다."),
+
+    // 식당
+    LATITUDE_COUNT_ERROR(HttpStatus.BAD_REQUEST, HttpStatus.BAD_REQUEST.value(), "4개의 위도를 입력해야 합니다."),
+    LONGITUDE_COUNT_ERROR(HttpStatus.BAD_REQUEST, HttpStatus.BAD_REQUEST.value(), "4개의 경도를 입력해야 합니다."),
+    COORDINATE_OUT_OF_BOUND(HttpStatus.BAD_REQUEST, HttpStatus.BAD_REQUEST.value(), "위도와 경도가 허용 범위를 벗어났습니다.")
     ;
 
     private final HttpStatus status;
