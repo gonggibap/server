@@ -20,10 +20,12 @@ public class WebConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry
                 .addMapping("/**")
-                .allowedOrigins("*")
-                .allowCredentials(false)
-//                .allowedOrigins("http://localhost:3000") // 프론트엔드 주소
-//                .allowCredentials(true)  // 인증 정보 허용, origin 모두 허용인 경우 인증 정보 허용하지 않음
+//                .allowedOrigins("*")
+//                .allowCredentials(false)
+                .allowedOrigins("http://localhost:3000",
+                                "https://newstock.info"
+                        ) // 프론트엔드 주소
+                .allowCredentials(true)  // 인증 정보 허용, origin 모두 허용인 경우 인증 정보 허용하지 않음
                 .allowedHeaders("*")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH","OPTIONS")
                 .maxAge(3600);
