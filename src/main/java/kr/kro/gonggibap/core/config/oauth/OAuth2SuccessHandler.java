@@ -12,6 +12,7 @@ import kr.kro.gonggibap.domain.user.entity.User;
 import kr.kro.gonggibap.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -37,8 +38,8 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     public static final Duration ACCESS_TOKEN_DURATION = Duration.ofDays(30);
 
     // 로그인 성공 시 리다이렉트 페이지
-    //public static final String REDIRECT_PATH = "https://newstock.info/auth";
-    public static final String REDIRECT_PATH = "http://localhost:3000/auth";
+    @Value("${auth.redirect-path}")
+    public String REDIRECT_PATH;
 
     private final TokenProvider tokenProvider;
     private final OAuth2AuthorizationRequestBasedOnCookieRepository authorizationRequestRepository;
@@ -100,9 +101,9 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         clearAuthenticationAttributes(request, response);
 
         //리다이렉트 ( 2에서 만든 URL로 리다이렉트합니다)
-        log.info("targetUrl: {}" + targetUrl);
-        log.info("accessToken: {}" + accessToken);
-        log.info("authentication: {}" + authentication);
+        log.info("targetUrl: {}", targetUrl);
+        log.info("accessToken: {}", accessToken);
+        log.info("authentication: {}", authentication);
 
         SecurityContextHolder.getContext()
                 .setAuthentication(authentication);

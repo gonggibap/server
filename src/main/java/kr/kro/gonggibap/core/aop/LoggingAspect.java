@@ -13,7 +13,7 @@ import java.util.Arrays;
 @Slf4j
 public class LoggingAspect {
 
-    @Around(("within(kr.kro.gonggibap.domain.*.controller..*.*(..))"))
+    @Around("within(kr.kro.gonggibap.domain.*.controller..*)")
     public Object doLog(ProceedingJoinPoint joinPoint) throws Throwable {
 
         // 메서드 정보 가져오기
@@ -25,15 +25,15 @@ public class LoggingAspect {
         String params = Arrays.toString(args);
 
         log.info("====== 시작: {}.{} :: parameters {}", className, methodName, params);
-        long start = System.currentTimeMillis();
+        double start = System.currentTimeMillis();
         Object result = null;
 
         try {
             result = joinPoint.proceed(args);
             return result;
         } finally {
-            double executionTime = System.currentTimeMillis() - start;
-            log.info("====== 종료: {}.{} :: parameters {}", className, methodName, executionTime);
+            double executionTime = (System.currentTimeMillis() - start) / 1000;
+            log.info("====== 종료: {}.{} :: executionTime {}", className, methodName, executionTime);
         }
     }
 
