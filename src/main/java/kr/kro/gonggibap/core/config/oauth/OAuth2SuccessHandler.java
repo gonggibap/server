@@ -37,23 +37,21 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     public static final Duration REFRESH_TOKEN_DURATION = Duration.ofDays(14);
     public static final Duration ACCESS_TOKEN_DURATION = Duration.ofDays(30);
 
+    // 로그인 성공 시 리다이렉트 페이지
+    private final String redirectPath;
     private final TokenProvider tokenProvider;
     private final OAuth2AuthorizationRequestBasedOnCookieRepository authorizationRequestRepository;
     private final UserService userService;
 
-    @Value("${auth.redirect-url.local}")
-    private String localRedirectUrl;
-
-    @Value("${auth.redirect-url.production}")
-    private String productionRedirectUrl;
-
     public OAuth2SuccessHandler(
             TokenProvider tokenProvider,
             OAuth2AuthorizationRequestBasedOnCookieRepository authorizationRequestRepository,
-            UserService userService) {
+            UserService userService,
+            @Value("${auth.redirect-path}") String redirectPath) {
         this.tokenProvider = tokenProvider;
         this.authorizationRequestRepository = authorizationRequestRepository;
         this.userService = userService;
+        this.redirectPath = redirectPath;
     }
 
     // 성공적으로 로그인 하는 경우에 토큰과 관련된 작업을 추가로 처리하기 위해 오버라이드함
@@ -100,19 +98,8 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         // 쿠키에 액세스 토큰을 저장
         addAccessTokenToCookie(request, response, accessToken);
 
-        String origin = request.getHeader("Origin");
-        String redirectUrl;
-        if (origin != null && origin.contains("localhost")) {
-            // 로컬 환경 리다이렉션 URL
-            redirectUrl = localRedirectUrl;
-        } else {
-            // 배포 환경 리다이렉션 URL
-            redirectUrl = productionRedirectUrl;
-        }
-
         // 쿠키에서 리다이렉트 경로가 담긴 값을 가져와 쿼리파라미터에 액세스 토큰을 추가함
         String targetUrl = getTargetUrl(
-                redirectUrl,
                 accessToken,
                 accessTokenDetails.expireTime(),
                 refreshToken,
@@ -156,8 +143,8 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     }
 
     // 액세스 토큰을 패스에 추가
-    private String getTargetUrl(String redirectUrl, String accessToken, LocalDateTime accessTokenExpireTime, String refreshToken, LocalDateTime refreshTokenExpireTime) {
-        return UriComponentsBuilder.fromUriString(redirectUrl)
+    private String getTargetUrl(String accessToken, LocalDateTime accessTokenExpireTime, String refreshToken, LocalDateTime refreshTokenExpireTime) {
+        return UriComponentsBuilder.fromUriString(redirectPath)
                 .queryParam("accessToken", accessToken)
                 .queryParam("accessTokenExpireTime", accessTokenExpireTime)
                 .queryParam("refreshToken", refreshToken)
