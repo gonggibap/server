@@ -60,9 +60,9 @@ public class RestaurantService {
     }
 
     /**
-     * 우선 간단한 쿼리로 날림
-     * 쿼리 기반 full-text search를 박을 건지 (ex. 치킨, 칼국수)
-     * 지역명 활용해서 검색하는 것은 별도의 로직 및 필터링 역할 생각해봐야 함
+     * 1. 음식 기반 검색 (ex. 피자, 치킨, 칼국수 치킨)
+     * 2. 지역구 기반 검색 (ex. 강남구, 종로)
+     * 3. 음식 및 지역구 기반 검색 (ex. 강남구 피자, 치킨 종로구, 용산 고기)
      * @param query
      * @param pageable
      */
