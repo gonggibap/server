@@ -3,6 +3,8 @@ package kr.kro.gonggibap.domain.restaurant.service;
 import kr.kro.gonggibap.core.exception.CustomException;
 import kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantPageResponse;
 import kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantResponse;
+import kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantSearchPageResponse;
+import kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantSearchResponse;
 import kr.kro.gonggibap.domain.restaurant.repository.RestaurantRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -45,6 +47,19 @@ public class RestaurantService {
 
         return new RestaurantPageResponse(restaurantResponses.getTotalPages(),
                 restaurantResponses.getContent());
+    }
+
+    /**
+     * 우선 간단한 쿼리로 날림
+     * 쿼리 기반 full-text search를 박을 건지 (ex. 치킨, 칼국수)
+     * 지역명 활용해서 검색하는 것은 별도의 로직 및 필터링 역할 생각해봐야 함
+     */
+    public RestaurantSearchPageResponse searchRestaurant(String query, Pageable pageable) {
+        
+        Page<RestaurantSearchResponse> restaurantSearchResponses = restaurantRepository.searchRestaurant(query, pageable);
+
+        return new RestaurantSearchPageResponse(restaurantSearchResponses.getTotalPages(),
+                restaurantSearchResponses.getContent());
     }
 
     private void validateCoordinate(List<BigDecimal> latitudes, List<BigDecimal> longitudes){
