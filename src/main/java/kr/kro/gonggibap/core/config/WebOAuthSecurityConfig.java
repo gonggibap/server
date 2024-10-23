@@ -35,9 +35,6 @@ public class WebOAuthSecurityConfig {
     private final TokenProvider tokenProvider;
     private final UserService userService;
 
-    @Value("${auth.redirect-path}")
-    private String redirectPath;
-
     // 스프링 시큐리티 기능 비활성화
     @Bean
     public WebSecurityCustomizer configure() {
@@ -108,8 +105,7 @@ public class WebOAuthSecurityConfig {
         return new OAuth2SuccessHandler(
                 tokenProvider,
                 oAuth2AuthorizationRequestBasedOnCookieRepository(),
-                userService,
-                redirectPath
+                userService
         );
     }
 
