@@ -19,16 +19,4 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
     private final UserService userService;
 
-    // 로그인 성공 시 리다이렉트 페이지
-    @Value("${auth.redirect-path}")
-    public String REDIRECT_PATH;
-
-    @GetMapping("/test")
-    public ResponseEntity<?> test() {
-        log.info(REDIRECT_PATH);
-//        log.info(user.getEmail());
-//        log.info(user.getName());
-//        log.info(String.valueOf(user.getUserRole()));
-        return ResponseEntity.ok("Hello World");
-    }
 }
