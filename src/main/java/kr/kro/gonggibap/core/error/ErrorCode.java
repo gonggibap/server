@@ -27,7 +27,12 @@ public enum ErrorCode {
     USERNAME_IS_NULL(HttpStatus.NOT_FOUND, HttpStatus.NOT_FOUND.value(), "Username이 null 입니다."),
     FAILED_UNFOLLOW(HttpStatus.FORBIDDEN, HttpStatus.FORBIDDEN.value(), "Unfollow할 컬럼이 존재하지 않거나, Unfollow를 실패했습니다."),
     NOT_AUTHORIZATION(HttpStatus.UNAUTHORIZED, HttpStatus.UNAUTHORIZED.value(), "해당 권한이 없는 사용자입니다."),
-    NOT_EXISTS_FOLLOW(HttpStatus.UNAUTHORIZED, HttpStatus.UNAUTHORIZED.value(), "해당하는 팔로잉 관계가 없습니다.")
+    NOT_EXISTS_FOLLOW(HttpStatus.UNAUTHORIZED, HttpStatus.UNAUTHORIZED.value(), "해당하는 팔로잉 관계가 없습니다."),
+
+    // 식당
+    LATITUDE_COUNT_ERROR(HttpStatus.BAD_REQUEST, HttpStatus.BAD_REQUEST.value(), "4개의 위도를 입력해야 합니다."),
+    LONGITUDE_COUNT_ERROR(HttpStatus.BAD_REQUEST, HttpStatus.BAD_REQUEST.value(), "4개의 경도를 입력해야 합니다."),
+    COORDINATE_OUT_OF_BOUND(HttpStatus.BAD_REQUEST, HttpStatus.BAD_REQUEST.value(), "위도와 경도가 허용 범위를 벗어났습니다.")
     ;
 
     private final HttpStatus status;

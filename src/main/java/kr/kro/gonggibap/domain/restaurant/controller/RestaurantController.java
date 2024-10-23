@@ -33,8 +33,8 @@ public class RestaurantController {
      */
     @GetMapping()
     public ResponseEntity<?> getRestaurant(@RequestParam List<BigDecimal> latitudes,
-                                                        @RequestParam List<BigDecimal> longitudes,
-                                                        @PageableDefault(page = 0, size = 30) Pageable pageable){
+                                                @RequestParam List<BigDecimal> longitudes,
+                                                @PageableDefault(page = 0, size = 30) Pageable pageable){
 
         RestaurantPageResponse response = restaurantService.getRestaurant(latitudes, longitudes, pageable);
         return ResponseEntity.ok(response);
