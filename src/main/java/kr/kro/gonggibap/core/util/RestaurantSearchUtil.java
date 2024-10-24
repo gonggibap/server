@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static kr.kro.gonggibap.core.config.jwt.constant.Districts.DISTRICTS;
+import static kr.kro.gonggibap.core.constant.Districts.DISTRICTS;
 import static kr.kro.gonggibap.core.validator.RestaurantSearchQueryValidator.validateQuery;
 
 @Slf4j
