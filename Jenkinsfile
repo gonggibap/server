@@ -60,7 +60,7 @@ pipeline {
                                     docker rm server || true
                                     docker ps --filter "publish=8080" --format "{{.ID}}" | xargs -r docker stop
                                     docker ps --filter "publish=8080" --format "{{.ID}}" | xargs -r docker rm
-                                    docker run -d --name server --network ${NETWORK_NAME} -p 8080:8080 ${DOCKER_HUB_REPO}:latest
+                                    docker run -d --name server -p 8080:8080 ${DOCKER_HUB_REPO}:latest
                                 """,
                                 remoteDirectory: '/home/ubuntu',
                                 removePrefix: ''
