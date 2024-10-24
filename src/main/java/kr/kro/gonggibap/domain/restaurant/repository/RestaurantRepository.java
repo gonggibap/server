@@ -49,4 +49,14 @@ public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {
             "FUNCTION('match_against', r.address, :district) DESC")
     Page<RestaurantSearchResponse> searchRestaurantByFoodAndDistrict(String food, String district, Pageable pageable);
 
+    /**
+     * 주소 코드 기반 식당 조회, 조회 시 방문수 내림차순 정렬
+     */
+    @Query(value = "SELECT new kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantSearchResponse(r.id, r.restaurantName, r.link, r.category, r.addressName, r.roadAddressName, r.latitude, r.longitude ) " +
+            "FROM Restaurant r " +
+            "LEFT JOIN r.histories h " +
+            "WHERE r.address.code =:dongCode " +
+            "GROUP BY r.id " +
+            "ORDER BY COUNT(h) desc")
+    Page<RestaurantResponse> findByAddressCode(String dongCode, Pageable pageable);
 }

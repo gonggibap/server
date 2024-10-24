@@ -107,7 +107,7 @@ public class RestaurantService {
      * @return
      */
     public RestaurantPageResponse getRestaurantByAddressCode(String dongCode, Pageable pageable) {
-        //restaurantRepository.findByAddressCode(dongCode, pageable);
+        restaurantRepository.findByAddressCode(dongCode, pageable);
         return null;
     }
 }

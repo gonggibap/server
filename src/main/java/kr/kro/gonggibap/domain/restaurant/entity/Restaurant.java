@@ -50,6 +50,6 @@ public class Restaurant {
     @OneToMany(mappedBy = "restaurant", cascade = CascadeType.REMOVE)
     private List<History> histories;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Address address;
 }
