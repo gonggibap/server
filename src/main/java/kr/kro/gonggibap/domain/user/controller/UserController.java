@@ -35,7 +35,7 @@ public class UserController implements UserControllerSwagger{
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getUserInfo(@LoginUser User user, @PathVariable Long id) {
-        if (user.getId() != id) {
+        if (user == null || user.getId() != id) {
             throw new CustomException(ErrorCode.NOT_AUTHORIZATION);
         }
 
