@@ -4,8 +4,11 @@ import kr.kro.gonggibap.core.exception.CustomException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.net.BindException;
 
 import static kr.kro.gonggibap.core.error.CommonResponse.failure;
 
@@ -14,10 +17,27 @@ import static kr.kro.gonggibap.core.error.CommonResponse.failure;
 public class ErrorHandler {
 
     @ExceptionHandler(CustomException.class)
-    public ResponseEntity<?> handleStockNotFoundException(final CustomException e) {
+    public ResponseEntity<?> handleCustomException(final CustomException e) {
         log.warn(e.getMessage());
         return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(failure(e.getMessage(), e.getErrorCode().getStatusCode()));
+                .status(e.getErrorCode().getStatus())
+                .body(failure(e.getMessage()));
     }
+
+    @ExceptionHandler(BindException.class)
+    public ResponseEntity<?> handleBindException(final BindException e) {
+        log.warn(e.getMessage());
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(failure(e.getMessage()));
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<?> handleMethodArgumentNotValidException(final MethodArgumentNotValidException e) {
+        log.warn(e.getMessage());
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(failure(e.getMessage()));
+    }
+
 }
