@@ -1,10 +1,12 @@
 package kr.kro.gonggibap.domain.restaurant.service;
 
+import kr.kro.gonggibap.core.error.ErrorCode;
 import kr.kro.gonggibap.core.exception.CustomException;
 import kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantPageResponse;
 import kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantResponse;
 import kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantSearchPageResponse;
 import kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantSearchResponse;
+import kr.kro.gonggibap.domain.restaurant.entity.Restaurant;
 import kr.kro.gonggibap.domain.restaurant.repository.RestaurantRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +28,16 @@ import static kr.kro.gonggibap.core.util.RestaurantSearchUtil.parseQuery;
 public class RestaurantService {
 
     private final RestaurantRepository restaurantRepository;
+
+    /**
+     * 식당 ID 기반 식당 조회
+     * @param restaurantId
+     * @return
+     */
+    public Restaurant findRestaurantById(Long restaurantId) {
+        return restaurantRepository.findById(restaurantId)
+                .orElseThrow(() -> new CustomException(NOT_FOUND_RESTAURANT));
+    }
 
     /**
      * 범위 내 식당 조회

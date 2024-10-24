@@ -31,9 +31,16 @@ public enum ErrorCode {
     LATITUDE_COUNT_ERROR(HttpStatus.BAD_REQUEST, HttpStatus.BAD_REQUEST.value(), "4개의 위도를 입력해야 합니다."),
     LONGITUDE_COUNT_ERROR(HttpStatus.BAD_REQUEST, HttpStatus.BAD_REQUEST.value(), "4개의 경도를 입력해야 합니다."),
     COORDINATE_OUT_OF_BOUND(HttpStatus.BAD_REQUEST, HttpStatus.BAD_REQUEST.value(), "위도와 경도가 허용 범위를 벗어났습니다."),
-    
+    NOT_FOUND_RESTAURANT(HttpStatus.NOT_FOUND, HttpStatus.NOT_FOUND.value(), "해당 식당은 존재하지 않습니다."),
+
     // 식당 검색
-    QUERY_EMPTY_ERROR(HttpStatus.BAD_REQUEST, HttpStatus.BAD_REQUEST.value(), "올바른 검색어를 입력해주세요.")
+    QUERY_EMPTY_ERROR(HttpStatus.BAD_REQUEST, HttpStatus.BAD_REQUEST.value(), "올바른 검색어를 입력해주세요."),
+
+    // 리뷰
+    NOT_FOUND_REVIEW(HttpStatus.NOT_FOUND, HttpStatus.NOT_FOUND.value(), "해당 리뷰는 존재하지 않습니다."),
+
+    // S3
+    FILE_UPLOAD_ERROR(HttpStatus.BAD_REQUEST, HttpStatus.BAD_REQUEST.value(), "잘못된 업로드 파일 형식입니다.")
     ;
 
     private final HttpStatus status;

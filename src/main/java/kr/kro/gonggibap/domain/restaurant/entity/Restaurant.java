@@ -2,6 +2,7 @@ package kr.kro.gonggibap.domain.restaurant.entity;
 
 import jakarta.persistence.*;
 import kr.kro.gonggibap.domain.history.entity.History;
+import kr.kro.gonggibap.domain.review.entity.Review;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -52,4 +53,7 @@ public class Restaurant {
 
     @ManyToOne
     private Address address;
+
+    @OneToMany(mappedBy = "restaurant", cascade = CascadeType.REMOVE)
+    private List<Review> reviews;
 }

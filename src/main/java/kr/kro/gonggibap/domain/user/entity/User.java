@@ -1,12 +1,15 @@
 package kr.kro.gonggibap.domain.user.entity;
 
 import jakarta.persistence.*;
+import kr.kro.gonggibap.domain.review.entity.Review;
 import lombok.*;
+
+import java.util.List;
 
 @Table(
         name = "users",
         uniqueConstraints = {
-                @UniqueConstraint(name = "username_unique", columnNames = "username")
+                @UniqueConstraint(name = "username_unique", columnNames = "email")
         })
 @Getter
 @Entity
@@ -28,6 +31,9 @@ public class User {
     @Enumerated(EnumType.STRING)
     @Column(name = "user_role")
     private UserRole userRole;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+    private List<Review> reviews;
 
     public void update(String name) {
         this.name = name;
