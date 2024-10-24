@@ -32,7 +32,7 @@ public class UserController implements UserControllerSwagger{
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getUserInfo(@PathVariable Long id) {
+    public ResponseEntity<?> getUserInfo(@LoginUser User user, @PathVariable Long id) {
         UserDto userDto = userService.findById(id);
 
         return ResponseEntity.ok(userDto);
