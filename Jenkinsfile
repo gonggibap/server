@@ -23,8 +23,8 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 configFileProvider([
-                    configFile(fileId: 'e4f42108-949c-491b-a2d4-6a9f76d55e0c', targetLocation: 'env.properties'),  // 첫 번째 파일
-                    configFile(fileId: 'b60dd942-c441-46c3-a590-5b42d69e3433', targetLocation: 'application.yml')      // 두 번째 파일
+                    configFile(fileId: '4f17cfba-7a7c-435a-9577-b2fc41d6d085', targetLocation: 'env.properties'),  // 첫 번째 파일
+                    configFile(fileId: 'd879cd1e-dfd5-4f19-9a85-6800cf3926f7', targetLocation: 'application.yml')      // 두 번째 파일
                 ]) {
                     script {
                         // config/env.properties 파일을 Docker 빌드에 포함시킵니다.
@@ -54,7 +54,7 @@ pipeline {
                             sshTransfer(
                                 sourceFiles: '',
                                 execCommand: """
-                                    docker image prune -a -f
+                                    docker system prune -f
                                     docker pull ${DOCKER_HUB_REPO}:latest
                                     docker stop server || true
                                     docker rm server || true

@@ -29,6 +29,9 @@ public class UserController implements UserControllerSwagger{
      */
     @GetMapping("")
     public ResponseEntity<?> getUserInfo(@LoginUser User user) {
+        if (user == null) {
+            throw new CustomException(ErrorCode.USER_NOT_EXISTS);
+        }
         UserDto userDto = UserDto.of(user);
         return ResponseEntity.ok(userDto);
     }
