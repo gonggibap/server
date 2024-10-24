@@ -30,7 +30,10 @@ public enum ErrorCode {
     // 식당
     LATITUDE_COUNT_ERROR(HttpStatus.BAD_REQUEST, HttpStatus.BAD_REQUEST.value(), "4개의 위도를 입력해야 합니다."),
     LONGITUDE_COUNT_ERROR(HttpStatus.BAD_REQUEST, HttpStatus.BAD_REQUEST.value(), "4개의 경도를 입력해야 합니다."),
-    COORDINATE_OUT_OF_BOUND(HttpStatus.BAD_REQUEST, HttpStatus.BAD_REQUEST.value(), "위도와 경도가 허용 범위를 벗어났습니다.")
+    COORDINATE_OUT_OF_BOUND(HttpStatus.BAD_REQUEST, HttpStatus.BAD_REQUEST.value(), "위도와 경도가 허용 범위를 벗어났습니다."),
+    
+    // 식당 검색
+    QUERY_EMPTY_ERROR(HttpStatus.BAD_REQUEST, HttpStatus.BAD_REQUEST.value(), "올바른 검색어를 입력해주세요.")
     ;
 
     private final HttpStatus status;

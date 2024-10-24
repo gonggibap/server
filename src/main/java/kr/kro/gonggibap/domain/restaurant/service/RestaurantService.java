@@ -3,6 +3,8 @@ package kr.kro.gonggibap.domain.restaurant.service;
 import kr.kro.gonggibap.core.exception.CustomException;
 import kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantPageResponse;
 import kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantResponse;
+import kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantSearchPageResponse;
+import kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantSearchResponse;
 import kr.kro.gonggibap.domain.restaurant.repository.RestaurantRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +17,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import static kr.kro.gonggibap.core.error.ErrorCode.*;
+import static kr.kro.gonggibap.core.util.RestaurantSearchUtil.parseQuery;
 
 @Slf4j
 @Transactional(readOnly = true)
@@ -45,6 +48,37 @@ public class RestaurantService {
 
         return new RestaurantPageResponse(restaurantResponses.getTotalPages(),
                 restaurantResponses.getContent());
+    }
+
+    /**
+     * 1. 음식 기반 검색 (ex. 피자, 치킨, 칼국수 치킨)
+     * 2. 지역구 기반 검색 (ex. 강남구, 종로)
+     * 3. 음식 및 지역구 기반 검색 (ex. 강남구 피자, 치킨 종로구, 용산 고기)
+     * @param query
+     * @param pageable
+     */
+    public RestaurantSearchPageResponse searchRestaurant(String query, Pageable pageable) {
+        List<String> parseResult = parseQuery(query); // 파싱된 결과 값
+        String district = parseResult.get(0);
+        String food = parseResult.get(1);
+
+
+        Page<RestaurantSearchResponse> restaurantSearchResponses;
+        // 만약 지역명이 없다면
+        if(district == null) {
+            restaurantSearchResponses = restaurantRepository.searchRestaurantByFood(food, pageable);
+        }
+        // 지역명만 있을 경우
+        else if (food == null){
+            log.info(district);
+            restaurantSearchResponses = restaurantRepository.searchRestaurantByDistrict(district, pageable);
+        }
+        else {
+            restaurantSearchResponses = restaurantRepository.searchRestaurantByFoodAndDistrict(food, district, pageable);
+        }
+
+        return new RestaurantSearchPageResponse(restaurantSearchResponses.getTotalPages(),
+                restaurantSearchResponses.getContent());
     }
 
     private void validateCoordinate(List<BigDecimal> latitudes, List<BigDecimal> longitudes){
