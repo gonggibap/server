@@ -25,7 +25,7 @@ public class UserController implements UserControllerSwagger{
      * @param user
      * @return
      */
-    @GetMapping("/")
+    @GetMapping("")
     public ResponseEntity<?> getUserInfo(@LoginUser User user) {
         UserDto userDto = UserDto.of(user);
         return ResponseEntity.ok(userDto);
