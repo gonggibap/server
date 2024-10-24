@@ -2,6 +2,7 @@ package kr.kro.gonggibap.domain.user.dto;
 
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import kr.kro.gonggibap.domain.user.entity.User;
 import kr.kro.gonggibap.domain.user.entity.UserRole;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,5 +21,13 @@ public class UserDto {
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
 
+    public static UserDto of(User user) {
+        UserDto result = new UserDto();
+        result.id = user.getId();
+        result.name = user.getName();
+        result.email = user.getEmail();
+        result.userRole = user.getUserRole();
+        return result;
+    }
 
 }
