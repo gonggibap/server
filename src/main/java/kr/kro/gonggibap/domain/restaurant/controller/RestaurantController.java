@@ -39,4 +39,19 @@ public class RestaurantController {
         RestaurantPageResponse response = restaurantService.getRestaurant(latitudes, longitudes, pageable);
         return ResponseEntity.ok(response);
     }
+
+    /**
+     * 주소 코드 기반 식당 조회
+     * 조회 시 방문수 내림차순 정렬
+     * @param dongCode
+     * @param pageable
+     * @return
+     */
+    @GetMapping("/by-dong")
+    public ResponseEntity<?> getRestaurantByAddressCode(@RequestParam String dongCode,
+                                                        @PageableDefault(page = 0, size = 30) Pageable pageable) {
+
+        RestaurantPageResponse response = restaurantService.getRestaurantByAddressCode(dongCode, pageable);
+        return ResponseEntity.ok(response);
+    }
 }

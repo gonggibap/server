@@ -24,6 +24,14 @@ public class RestaurantService {
 
     private final RestaurantRepository restaurantRepository;
 
+    /**
+     * 범위 내 식당 조회
+     * 조회 시 방문수 내림차순 정렬
+     * @param latitudes
+     * @param longitudes
+     * @param pageable
+     * @return RestaurantPageResponse response
+     */
     public RestaurantPageResponse getRestaurant(List<BigDecimal> latitudes, List<BigDecimal> longitudes, Pageable pageable) {
 
         validateCoordinate(latitudes, longitudes);
@@ -55,5 +63,17 @@ public class RestaurantService {
         if(longitudes.size() != 4){
             throw new CustomException(LONGITUDE_COUNT_ERROR);
         }
+    }
+
+    /**
+     * 주소 코드 기반 식당 조회
+     * 조회 시 방문수 내림차순 정렬
+     * @param dongCode
+     * @param pageable
+     * @return
+     */
+    public RestaurantPageResponse getRestaurantByAddressCode(String dongCode, Pageable pageable) {
+        //restaurantRepository.findByAddressCode(dongCode, pageable);
+        return null;
     }
 }

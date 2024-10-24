@@ -31,10 +31,10 @@ public class Restaurant {
     private String category;
 
     @Column(nullable = false, length = 255)
-    private String address;
+    private String addressName;
 
     @Column(nullable = false, length = 255)
-    private String roadAddress;
+    private String roadAddressName;
 
     @Column(precision = 10, scale = 7, nullable = false)
     private BigDecimal latitude;
@@ -49,4 +49,7 @@ public class Restaurant {
 
     @OneToMany(mappedBy = "restaurant", cascade = CascadeType.REMOVE)
     private List<History> histories;
+
+    @ManyToOne
+    private Address address;
 }
