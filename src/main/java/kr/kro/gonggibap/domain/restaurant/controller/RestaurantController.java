@@ -42,6 +42,20 @@ public class RestaurantController {
     }
 
     /**
+     * 주소 코드 기반 식당 조회
+     * 조회 시 방문수 내림차순 정렬
+     * @param dongCode
+     * @param pageable
+     * @return
+     */
+    @GetMapping("/by-dong")
+    public ResponseEntity<?> getRestaurantByAddressCode(@RequestParam String dongCode,
+                                                        @PageableDefault(page = 0, size = 30) Pageable pageable) {
+
+        RestaurantPageResponse response = restaurantService.getRestaurantByAddressCode(dongCode, pageable);
+        return ResponseEntity.ok(response);
+    }
+
      * 사용자의 검색어에 따른 음식점 검색
      * 일치 여부(score)에 따른 내림차순 정렬
      * @param query
