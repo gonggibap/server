@@ -56,6 +56,7 @@ public class RestaurantController {
         return ResponseEntity.ok(response);
     }
 
+    /**
      * 사용자의 검색어에 따른 음식점 검색
      * 일치 여부(score)에 따른 내림차순 정렬
      * @param query
