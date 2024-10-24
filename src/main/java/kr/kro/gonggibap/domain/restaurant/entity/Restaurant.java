@@ -2,6 +2,7 @@ package kr.kro.gonggibap.domain.restaurant.entity;
 
 import jakarta.persistence.*;
 import kr.kro.gonggibap.domain.history.entity.History;
+import kr.kro.gonggibap.domain.review.entity.Review;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -50,6 +51,10 @@ public class Restaurant {
     @OneToMany(mappedBy = "restaurant", cascade = CascadeType.REMOVE)
     private List<History> histories;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "code", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Address address;
+
+    @OneToMany(mappedBy = "restaurant", cascade = CascadeType.REMOVE)
+    private List<Review> reviews;
 }

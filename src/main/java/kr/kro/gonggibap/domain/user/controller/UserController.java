@@ -6,10 +6,11 @@ import kr.kro.gonggibap.domain.user.entity.User;
 import kr.kro.gonggibap.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController
@@ -20,7 +21,6 @@ public class UserController implements UserControllerSwagger{
 
     /**
      * 사용자의 정보를 반환하는 API
-     *
      * 로그인 된 사용자가 자신의 정보를 조회할 때 사용함.
      * @param user
      * @return
