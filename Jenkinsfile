@@ -83,6 +83,8 @@ pipeline {
                         git config --global user.email "thswltjr11@gmail.com"
                         git config --global user.name "sonjiseokk"
 
+                        rm -rf S11P31C204
+
                         # Clone GitLab repository
                         git clone https://${GITLAB_USERNAME}:${GITLAB_PASSWORD}@lab.ssafy.com/s11-final/S11P31C204.git
                         cd S11P31C204
