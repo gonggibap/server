@@ -54,6 +54,7 @@ pipeline {
                             sshTransfer(
                                 sourceFiles: '',
                                 execCommand: """
+                                    docker image prune -a -f
                                     docker pull ${DOCKER_HUB_REPO}:latest
                                     docker stop server || true
                                     docker rm server || true
