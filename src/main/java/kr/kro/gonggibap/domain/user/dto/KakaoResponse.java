@@ -1,5 +1,6 @@
 package kr.kro.gonggibap.domain.user.dto;
 
+import kr.kro.gonggibap.core.util.RandomNicknameGenerator;
 import kr.kro.gonggibap.domain.user.entity.User;
 import kr.kro.gonggibap.domain.user.entity.UserRole;
 import lombok.extern.slf4j.Slf4j;
@@ -7,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Map;
-import java.util.UUID;
 
 @Slf4j
 public class KakaoResponse implements OAuth2Response {
@@ -71,7 +71,7 @@ public class KakaoResponse implements OAuth2Response {
 
         return User.builder()
                 .email(email)
-                .name(UUID.randomUUID().toString().substring(0, 15))
+                .name(RandomNicknameGenerator.generateRandomNickname())
                 .userRole(UserRole.USER)
                 .build();
     }
