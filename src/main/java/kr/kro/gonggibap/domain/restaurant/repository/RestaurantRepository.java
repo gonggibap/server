@@ -34,8 +34,8 @@ public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {
      */
     @Query(value = "SELECT new kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantSearchResponse(r.id, r.restaurantName, r.link, r.category, r.addressName, r.roadAddressName, r.latitude, r.longitude ) " +
             "FROM Restaurant r " +
-            "WHERE FUNCTION('match_against', r.address, :district) > 0 " +  // Check if the relevance score is positive
-            "ORDER BY FUNCTION('match_against', r.address, :district) DESC")
+            "WHERE FUNCTION('match_against', r.addressName, :district) > 0 " +  // Check if the relevance score is positive
+            "ORDER BY FUNCTION('match_against', r.addressName, :district) DESC")
     Page<RestaurantSearchResponse> searchRestaurantByDistrict(String district, Pageable pageable);
 
     /**
@@ -44,9 +44,9 @@ public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {
     @Query(value = "SELECT new kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantSearchResponse(r.id, r.restaurantName, r.link, r.category, r.addressName, r.roadAddressName, r.latitude, r.longitude ) " +
             "FROM Restaurant r " +
             "WHERE FUNCTION('match_against', r.restaurantName, :food) > 0 " +  // 음식 이름으로 검색
-            "AND FUNCTION('match_against', r.address, :district) > 0 " +  // 주소로 검색
+            "AND FUNCTION('match_against', r.addressName, :district) > 0 " +  // 주소로 검색
             "ORDER BY FUNCTION('match_against', r.restaurantName, :food) DESC, " +
-            "FUNCTION('match_against', r.address, :district) DESC")
+            "FUNCTION('match_against', r.addressName, :district) DESC")
     Page<RestaurantSearchResponse> searchRestaurantByFoodAndDistrict(String food, String district, Pageable pageable);
 
 }
