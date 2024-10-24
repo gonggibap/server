@@ -1,6 +1,8 @@
 package kr.kro.gonggibap.domain.user.controller;
 
 import kr.kro.gonggibap.core.annotation.LoginUser;
+import kr.kro.gonggibap.core.error.ErrorCode;
+import kr.kro.gonggibap.core.exception.CustomException;
 import kr.kro.gonggibap.domain.user.dto.UserDto;
 import kr.kro.gonggibap.domain.user.entity.User;
 import kr.kro.gonggibap.domain.user.service.UserService;
@@ -25,14 +27,18 @@ public class UserController implements UserControllerSwagger{
      * @param user
      * @return
      */
-    @GetMapping("/")
+    @GetMapping("")
     public ResponseEntity<?> getUserInfo(@LoginUser User user) {
         UserDto userDto = UserDto.of(user);
         return ResponseEntity.ok(userDto);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getUserInfo(@PathVariable Long id) {
+    public ResponseEntity<?> getUserInfo(@LoginUser User user, @PathVariable Long id) {
+        if (user == null || user.getId() != id) {
+            throw new CustomException(ErrorCode.NOT_AUTHORIZATION);
+        }
+
         UserDto userDto = userService.findById(id);
 
         return ResponseEntity.ok(userDto);
