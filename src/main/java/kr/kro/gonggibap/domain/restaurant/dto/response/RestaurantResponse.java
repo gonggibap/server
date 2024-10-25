@@ -14,6 +14,7 @@ public class RestaurantResponse {
     private String restaurantName;
     private String restaurantLink;
     private String restaurantCategory;
+    private String restaurantDetailCategory;
     private String restaurantAddressName;
     private String restaurantRoadAddressName;
     private BigDecimal restaurantLatitude;

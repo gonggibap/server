@@ -31,6 +31,9 @@ public class Restaurant {
     @Column(length = 255)
     private String category;
 
+    @Column(length = 255)
+    private String detailCategory;
+
     @Column(nullable = false, length = 255)
     private String addressName;
 
