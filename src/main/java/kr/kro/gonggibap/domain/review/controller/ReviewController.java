@@ -10,6 +10,7 @@ import kr.kro.gonggibap.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,7 +22,7 @@ import static kr.kro.gonggibap.core.error.CommonResponse.success;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/reviews")
-public class ReviewController {
+public class ReviewController implements ReviewControllerSwagger{
 
     private final ReviewService reviewService;
 
@@ -31,7 +32,7 @@ public class ReviewController {
      * @return
      */
     @GetMapping()
-    public ResponseEntity<?> getReviews(@RequestParam Long restaurantId){
+    public ResponseEntity<?> getReviews(@RequestParam Long restaurantId) {
         List<ReviewResponse> reviews = reviewService.getReviews(restaurantId);
 
         return ResponseEntity.ok(success(reviews));
@@ -43,9 +44,9 @@ public class ReviewController {
      * @param request 식당 ID, 리뷰 내용, 리뷰 점수, 이미지
      * @return
      */
-    @PostMapping()
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> createReview(@LoginUser User user,
-                                            @Valid @ModelAttribute ReviewCreateRequest request){
+                                            @Valid @ModelAttribute ReviewCreateRequest request) {
         Long reviewId = reviewService.createReview(request, user);
 
         return ResponseEntity.ok(success(new ReviewCreateResponse(reviewId)));
@@ -59,7 +60,7 @@ public class ReviewController {
      */
     @DeleteMapping()
     public ResponseEntity<?> deleteReview(@LoginUser User user,
-                                            @RequestParam Long reviewId){
+                                            @RequestParam Long reviewId) {
         reviewService.deleteReview(user, reviewId);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT)
