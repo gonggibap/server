@@ -21,16 +21,14 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 public interface ReviewControllerSwagger {
 
     @Operation(summary = "리뷰 전체 조회",
-            description = "모든 사용자가 특정 식당에 대한 리뷰 조회",
-            parameters = {
-                    @Parameter(name = "restaurantId", description = "식당 ID", in = ParameterIn.PATH)
-            }
+            description = "모든 사용자가 특정 식당에 대한 리뷰 조회"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "404", description = "식당을 찾을 수 없습니다.", content = @Content(mediaType = "application/json"))
     })
-    @GetMapping()
-    ResponseEntity<?> getReviews(@RequestParam Long restaurantId);
+    @GetMapping("/restaurant/{id}")
+    ResponseEntity<?> getReviews(@PathVariable Long id);
 
     @Operation(summary = "리뷰 작성",
             description = "로그인한 사용자가 식당 리뷰 작성",
@@ -51,8 +49,7 @@ public interface ReviewControllerSwagger {
     @Operation(summary = "리뷰 삭제",
             description = "로그인한 사용자가 작성한 식당 리뷰 삭제",
             parameters = {
-                    @Parameter(name = AUTHORIZATION, description = "access token", in = ParameterIn.HEADER, required = true),
-                    @Parameter(name = "reviewId", description = "리뷰 ID", in = ParameterIn.PATH)
+                    @Parameter(name = AUTHORIZATION, description = "access token", in = ParameterIn.HEADER, required = true)
             }
     )
     @ApiResponses(value = {
@@ -61,7 +58,7 @@ public interface ReviewControllerSwagger {
             @ApiResponse(responseCode = "401", description = "삭제 권한이 없습니다.", content = @Content(mediaType = "application/json")),
             @ApiResponse(responseCode = "404", description = "리뷰를 찾을 수 없습니다.", content = @Content(mediaType = "application/json"))
     })
-    @DeleteMapping()
+    @DeleteMapping("/{id}")
     ResponseEntity<?> deleteReview(@Parameter(hidden = true) @LoginUser User user,
-                                    @RequestParam Long reviewId);
-}
+                                    @PathVariable Long id);
+    }
