@@ -14,15 +14,14 @@ import java.util.Map;
 public class CommonResponse<T> {
 
     private boolean success;
-    private Integer status;
     private T data;
     private String error;
 
     public static <T> CommonResponse<T> success(T data) {
-        return new CommonResponse<>(true, null, data, null);
+        return new CommonResponse<>(true, data, null);
     }
 
-    public static <T> CommonResponse<T> failure(String error, int statusCode) {
-        return new CommonResponse<>(false, statusCode, null, error);
+    public static <T> CommonResponse<T> failure(String error) {
+        return new CommonResponse<>(false, null, error);
     }
 }

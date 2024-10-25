@@ -1,4 +1,4 @@
-package kr.kro.gonggibap.core.config.jwt.constant;
+package kr.kro.gonggibap.core.constant;
 
 import java.util.Arrays;
 import java.util.List;

@@ -23,8 +23,8 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 configFileProvider([
-                    configFile(fileId: 'e4f42108-949c-491b-a2d4-6a9f76d55e0c', targetLocation: 'env.properties'),  // 첫 번째 파일
-                    configFile(fileId: 'b60dd942-c441-46c3-a590-5b42d69e3433', targetLocation: 'application.yml')      // 두 번째 파일
+                    configFile(fileId: '4f17cfba-7a7c-435a-9577-b2fc41d6d085', targetLocation: 'env.properties'),  // 첫 번째 파일
+                    configFile(fileId: 'd879cd1e-dfd5-4f19-9a85-6800cf3926f7', targetLocation: 'application.yml')      // 두 번째 파일
                 ]) {
                     script {
                         // config/env.properties 파일을 Docker 빌드에 포함시킵니다.
@@ -54,13 +54,13 @@ pipeline {
                             sshTransfer(
                                 sourceFiles: '',
                                 execCommand: """
-                                    docker image prune -a -f
+                                    docker system prune -f
                                     docker pull ${DOCKER_HUB_REPO}:latest
                                     docker stop server || true
                                     docker rm server || true
                                     docker ps --filter "publish=8080" --format "{{.ID}}" | xargs -r docker stop
                                     docker ps --filter "publish=8080" --format "{{.ID}}" | xargs -r docker rm
-                                    docker run -d --name server --network ${NETWORK_NAME} -p 8080:8080 ${DOCKER_HUB_REPO}:latest
+                                    docker run -d --name server -p 8080:8080 ${DOCKER_HUB_REPO}:latest
                                 """,
                                 remoteDirectory: '/home/ubuntu',
                                 removePrefix: ''
@@ -82,6 +82,8 @@ pipeline {
                     sh '''
                         git config --global user.email "thswltjr11@gmail.com"
                         git config --global user.name "sonjiseokk"
+
+                        rm -rf S11P31C204
 
                         # Clone GitLab repository
                         git clone https://${GITLAB_USERNAME}:${GITLAB_PASSWORD}@lab.ssafy.com/s11-final/S11P31C204.git
@@ -107,8 +109,28 @@ pipeline {
     }
 
     post {
-        always {
-            cleanWs()
+        success {
+            script {
+                def Author_ID = sh(script: "git show -s --pretty=%an", returnStdout: true).trim()
+                def Author_Name = sh(script: "git show -s --pretty=%ae", returnStdout: true).trim()
+                mattermostSend(color: 'good',
+                message: "빌드 성공: ${env.JOB_NAME} #${env.BUILD_NUMBER} by ${Author_ID}(${Author_Name})\n(<${env.BUILD_URL}|Details>)",
+                endpoint: 'https://meeting.ssafy.com/hooks/e61kngw88idn8gtrxuwafbxy3y',
+                channel: 'GongGiBap-Jenkins')
+            }
+        }
+        failure {
+            script {
+                withEnv(["LANG=en_US.UTF-8"]) {
+                    def Author_ID = sh(script: "git show -s --pretty=%an", returnStdout: true).trim()
+                    def Author_Name = sh(script: "git show -s --pretty=%ae", returnStdout: true).trim()
+                    mattermostSend(color: 'danger',
+                    message: "빌드 실패: ${env.JOB_NAME} #${env.BUILD_NUMBER} by ${Author_ID}(${Author_Name})\n(<${env.BUILD_URL}|Details>)",
+                    endpoint: 'https://meeting.ssafy.com/hooks/e61kngw88idn8gtrxuwafbxy3y',
+                    channel: 'GongGiBap-Jenkins')
+                }
+            }
         }
     }
+
 }
