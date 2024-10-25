@@ -66,6 +66,8 @@ public class ReviewService {
      * @return
      */
     public List<ReviewResponse> getReviews(Long restaurantId) {
+        restaurantService.findRestaurantById(restaurantId);
+
         List<Review> reviews = reviewRepository.findAllByRestaurantIdWithImages(restaurantId);
 
         return reviews.stream()

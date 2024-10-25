@@ -39,6 +39,9 @@ public enum ErrorCode {
     // 리뷰
     NOT_FOUND_REVIEW(HttpStatus.NOT_FOUND, HttpStatus.NOT_FOUND.value(), "해당 리뷰는 존재하지 않습니다."),
 
+    // 공공기관
+    NOT_FOUND_PUBLIC_OFFICE(HttpStatus.NOT_FOUND, HttpStatus.NOT_FOUND.value(), "해당 공공기관은 존재하지 않습니다."),
+
     // S3
     FILE_UPLOAD_ERROR(HttpStatus.BAD_REQUEST, HttpStatus.BAD_REQUEST.value(), "잘못된 업로드 파일 형식입니다.")
     ;

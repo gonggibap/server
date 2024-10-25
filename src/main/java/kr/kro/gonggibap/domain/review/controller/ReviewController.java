@@ -31,9 +31,9 @@ public class ReviewController implements ReviewControllerSwagger{
      * @param restaurantId
      * @return
      */
-    @GetMapping()
-    public ResponseEntity<?> getReviews(@RequestParam Long restaurantId) {
-        List<ReviewResponse> reviews = reviewService.getReviews(restaurantId);
+    @GetMapping("/restaurant/{id}")
+    public ResponseEntity<?> getReviews(@PathVariable Long id) {
+        List<ReviewResponse> reviews = reviewService.getReviews(id);
 
         return ResponseEntity.ok(success(reviews));
     }
@@ -44,7 +44,7 @@ public class ReviewController implements ReviewControllerSwagger{
      * @param request 식당 ID, 리뷰 내용, 리뷰 점수, 이미지
      * @return
      */
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> createReview(@LoginUser User user,
                                             @Valid @ModelAttribute ReviewCreateRequest request) {
         Long reviewId = reviewService.createReview(request, user);
@@ -58,10 +58,10 @@ public class ReviewController implements ReviewControllerSwagger{
      * @param reviewId
      * @return
      */
-    @DeleteMapping()
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteReview(@LoginUser User user,
-                                            @RequestParam Long reviewId) {
-        reviewService.deleteReview(user, reviewId);
+                                            @PathVariable Long id) {
+        reviewService.deleteReview(user, id);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT)
                 .build();

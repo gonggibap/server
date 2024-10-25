@@ -42,7 +42,8 @@ public class WebOAuthSecurityConfig {
     @Bean
     public WebSecurityCustomizer configure() {
         return (web) -> web.ignoring()
-                .requestMatchers("/img/**", "/css/**", "/js/**");
+                .requestMatchers("/img/**", "/css/**", "/js/**", "/v3/api-docs/**", "/swagger-ui/**",
+                        "/swagger-ui.html", "/swagger-resources/**", "/webjars/**");
 
     }
 
