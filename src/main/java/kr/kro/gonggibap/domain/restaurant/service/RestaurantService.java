@@ -111,15 +111,15 @@ public class RestaurantService {
      * @return
      */
     public PageResponse<?> getRestaurantByAddressCode(String dongCode, Pageable pageable) {
-        Page<RestaurantResponse> pageResult = restaurantRepository.findByAddressCode(dongCode, pageable);
-        pageResult.getContent();
-        // 주수 코드 기반 식당 리스트가 비어있다면
-        if (pageResult.isEmpty()) {
+        Page<RestaurantSearchResponse> pageResult = restaurantRepository.findByAddressCode(dongCode, pageable);
+        List<RestaurantSearchResponse> content = pageResult.getContent();
+        // 주소 코드 기반 식당 리스트가 비어있다면
+        if (content.isEmpty()) {
             throw new CustomException(DONG_NOT_FOUND_ERROR);
         }
 
         int totalPages = pageResult.getTotalPages(); // 전체 페이지 수
 
-        return new PageResponse<>(totalPages, pageResult.getContent());
+        return new PageResponse<>(totalPages, content);
     }
 }

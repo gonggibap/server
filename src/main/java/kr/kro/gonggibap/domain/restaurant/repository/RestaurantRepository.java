@@ -55,8 +55,9 @@ public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {
     @Query(value = "SELECT new kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantSearchResponse(r.id, r.restaurantName, r.link, r.category, r.addressName, r.roadAddressName, r.latitude, r.longitude ) " +
             "FROM Restaurant r " +
             "LEFT JOIN r.histories h " +
-            "WHERE r.address.code =:dongCode " +
+            "LEFT JOIN r.address ra " +
+            "WHERE ra.code =:dongCode " +
             "GROUP BY r.id " +
             "ORDER BY COUNT(h) desc")
-    Page<RestaurantResponse> findByAddressCode(String dongCode, Pageable pageable);
+    Page<RestaurantSearchResponse> findByAddressCode(String dongCode, Pageable pageable);
 }
