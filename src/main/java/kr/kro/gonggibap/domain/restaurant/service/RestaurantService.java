@@ -29,7 +29,7 @@ import static kr.kro.gonggibap.domain.restaurant.service.validator.RestaurantVal
 public class RestaurantService {
 
     private final RestaurantRepository restaurantRepository;
-    private final AddressRepository addressRepository;
+    private final AddressService addressService;
 
     /**
      * 식당 ID 기반 식당 조회
@@ -111,15 +111,19 @@ public class RestaurantService {
      * @return
      */
     public PageResponse<?> getRestaurantByAddressCode(String dongCode, Pageable pageable) {
-        Page<RestaurantSearchResponse> pageResult = restaurantRepository.findByAddressCode(dongCode, pageable);
-        List<RestaurantSearchResponse> content = pageResult.getContent();
-        // 주소 코드 기반 식당 리스트가 비어있다면
-        if (content.isEmpty()) {
+        // 동 코드가 유효하지 않은 경우
+        if (addressService.isExistDongCode(dongCode)) {
             throw new CustomException(DONG_NOT_FOUND_ERROR);
+        }
+
+        Page<RestaurantSearchResponse> pageResult = restaurantRepository.findByAddressCode(dongCode, pageable);
+        // 주소 코드 기반 식당 리스트가 비어있다면 404
+        if (pageResult.isEmpty()) {
+            throw new CustomException(NOT_FOUND_RESTAURANT);
         }
 
         int totalPages = pageResult.getTotalPages(); // 전체 페이지 수
 
-        return new PageResponse<>(totalPages, content);
+        return new PageResponse<>(totalPages, pageResult.getContent());
     }
 }
