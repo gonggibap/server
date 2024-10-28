@@ -100,7 +100,6 @@ public class WebOAuthSecurityConfig {
     // 실패 핸들링
     // exception message와 status code를 queryparam으로 전달
     private AuthenticationFailureHandler oAuth2FailureHandler() {
-        log.error("3242314234");
         return (request, response, exception) -> {
             String errorMessage = URLEncoder.encode("authorization_request_not_found", StandardCharsets.UTF_8);
             response.sendRedirect("/login?error=" + errorMessage + "&code=" + response.getStatus());
