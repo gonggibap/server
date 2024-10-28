@@ -1,6 +1,7 @@
 package kr.kro.gonggibap.domain.publicoffice.controller;
 
 import kr.kro.gonggibap.domain.publicoffice.dto.response.PublicOfficeResponse;
+import kr.kro.gonggibap.domain.publicoffice.dto.response.PublicOfficeRestaurantResponse;
 import kr.kro.gonggibap.domain.publicoffice.service.PublicOfficeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +22,7 @@ public class PublicOfficeController implements PublicOfficeControllerSwagger{
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getPublicOffice(@PathVariable Long id) {
-        PublicOfficeResponse publicOffice = publicOfficeService.getPublicOffice(id);
+        PublicOfficeRestaurantResponse publicOffice = publicOfficeService.getPublicOffice(id);
 
         return ResponseEntity.ok(success(publicOffice));
     }
