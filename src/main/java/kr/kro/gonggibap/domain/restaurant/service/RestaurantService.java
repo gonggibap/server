@@ -1,12 +1,12 @@
 package kr.kro.gonggibap.domain.restaurant.service;
 
-import kr.kro.gonggibap.core.error.ErrorCode;
 import kr.kro.gonggibap.core.exception.CustomException;
 import kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantPageResponse;
 import kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantResponse;
 import kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantSearchPageResponse;
 import kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantSearchResponse;
 import kr.kro.gonggibap.domain.restaurant.entity.Restaurant;
+import kr.kro.gonggibap.domain.restaurant.repository.AddressRepository;
 import kr.kro.gonggibap.domain.restaurant.repository.RestaurantRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +19,8 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import static kr.kro.gonggibap.core.error.ErrorCode.*;
-import static kr.kro.gonggibap.core.util.RestaurantSearchUtil.parseQuery;
+import static kr.kro.gonggibap.domain.restaurant.service.validator.RestaurantQueryParser.parseQuery;
+import static kr.kro.gonggibap.domain.restaurant.service.validator.RestaurantValidator.validateCoordinate;
 
 @Slf4j
 @Transactional(readOnly = true)
@@ -28,7 +29,7 @@ import static kr.kro.gonggibap.core.util.RestaurantSearchUtil.parseQuery;
 public class RestaurantService {
 
     private final RestaurantRepository restaurantRepository;
-
+    private final AddressRepository addressRepository;
     /**
      * 식당 ID 기반 식당 조회
      * @param restaurantId
@@ -82,33 +83,19 @@ public class RestaurantService {
         String district = parseResult.get(0);
         String food = parseResult.get(1);
 
-
         Page<RestaurantSearchResponse> restaurantSearchResponses;
         // 만약 지역명이 없다면
         if(district == null) {
             restaurantSearchResponses = restaurantRepository.searchRestaurantByFood(food, pageable);
-        }
-        // 지역명만 있을 경우
-        else if (food == null){
-            log.info(district);
+        } else if (food == null) { // 지역명만 있을 경우
+            log.info("district = {}", district);
             restaurantSearchResponses = restaurantRepository.searchRestaurantByDistrict(district, pageable);
-        }
-        else {
+        } else {
             restaurantSearchResponses = restaurantRepository.searchRestaurantByFoodAndDistrict(food, district, pageable);
         }
 
         return new RestaurantSearchPageResponse(restaurantSearchResponses.getTotalPages(),
                 restaurantSearchResponses.getContent());
-    }
-
-    private void validateCoordinate(List<BigDecimal> latitudes, List<BigDecimal> longitudes){
-        if(latitudes.size() != 4){
-            throw new CustomException(LATITUDE_COUNT_ERROR);
-        }
-
-        if(longitudes.size() != 4){
-            throw new CustomException(LONGITUDE_COUNT_ERROR);
-        }
     }
 
     /**
@@ -118,8 +105,13 @@ public class RestaurantService {
      * @param pageable
      * @return
      */
-    public RestaurantPageResponse getRestaurantByAddressCode(String dongCode, Pageable pageable) {
-        restaurantRepository.findByAddressCode(dongCode, pageable);
-        return null;
+    public List<RestaurantResponse> getRestaurantByAddressCode(String dongCode, Pageable pageable) {
+        // 동 코드가 존재하지 않는 경우
+        if (!addressRepository.existsById(dongCode)) {
+            throw new CustomException(DONG_NOT_FOUND_ERROR);
+        }
+
+        return restaurantRepository.findByAddressCode(dongCode, pageable)
+                .getContent();
     }
 }
