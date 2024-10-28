@@ -27,11 +27,11 @@ public class TokenExceptionFilter extends OncePerRequestFilter {
         try {
             filterChain.doFilter(request, response);
         } catch (CustomException e) {
-            setErrorResponse(HttpServletResponse.SC_OK, response, e);
+            setErrorResponse(response, e);
         }
     }
 
-    private void setErrorResponse(int status, HttpServletResponse response, CustomException ex) throws IOException {
+    private void setErrorResponse(HttpServletResponse response, CustomException ex) throws IOException {
         response.setStatus(ex.getErrorCode().getStatus().value());
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
