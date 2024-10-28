@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -30,8 +31,10 @@ public class RestaurantService {
 
     private final RestaurantRepository restaurantRepository;
     private final AddressRepository addressRepository;
+
     /**
      * 식당 ID 기반 식당 조회
+     *
      * @param restaurantId
      * @return
      */
@@ -43,6 +46,7 @@ public class RestaurantService {
     /**
      * 범위 내 식당 조회
      * 조회 시 방문수 내림차순 정렬
+     *
      * @param latitudes
      * @param longitudes
      * @param pageable
@@ -63,7 +67,7 @@ public class RestaurantService {
 
         try {
             restaurantResponses = restaurantRepository.getRestaurant(polygon.toString(), pageable);
-        } catch (Exception e){
+        } catch (Exception e) {
             throw new CustomException(COORDINATE_OUT_OF_BOUND);
         }
 
@@ -75,6 +79,7 @@ public class RestaurantService {
      * 1. 음식 기반 검색 (ex. 피자, 치킨, 칼국수 치킨)
      * 2. 지역구 기반 검색 (ex. 강남구, 종로)
      * 3. 음식 및 지역구 기반 검색 (ex. 강남구 피자, 치킨 종로구, 용산 고기)
+     *
      * @param query
      * @param pageable
      */
@@ -85,9 +90,9 @@ public class RestaurantService {
 
         Page<RestaurantSearchResponse> restaurantSearchResponses;
         // 만약 지역명이 없다면
-        if(district == null) {
+        if (!StringUtils.hasText(district)) {
             restaurantSearchResponses = restaurantRepository.searchRestaurantByFood(food, pageable);
-        } else if (food == null) { // 지역명만 있을 경우
+        } else if (!StringUtils.hasText(food)) { // 지역명만 있을 경우
             log.info("district = {}", district);
             restaurantSearchResponses = restaurantRepository.searchRestaurantByDistrict(district, pageable);
         } else {
@@ -101,17 +106,19 @@ public class RestaurantService {
     /**
      * 주소 코드 기반 식당 조회
      * 조회 시 방문수 내림차순 정렬
+     *
      * @param dongCode
      * @param pageable
      * @return
      */
     public List<RestaurantResponse> getRestaurantByAddressCode(String dongCode, Pageable pageable) {
-        // 동 코드가 존재하지 않는 경우
-        if (!addressRepository.existsById(dongCode)) {
+        List<RestaurantResponse> restaurants = restaurantRepository.findByAddressCode(dongCode, pageable).getContent();
+
+        // 주수 코드 기반 식당 리스트가 비어있다면
+        if (restaurants.isEmpty()) {
             throw new CustomException(DONG_NOT_FOUND_ERROR);
         }
 
-        return restaurantRepository.findByAddressCode(dongCode, pageable)
-                .getContent();
+        return restaurants;
     }
 }
