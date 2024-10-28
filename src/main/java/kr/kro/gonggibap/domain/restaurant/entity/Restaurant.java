@@ -29,6 +29,9 @@ public class Restaurant {
     private String link;
 
     @Column(length = 255)
+    private String phone;
+
+    @Column(length = 255)
     private String category;
 
     @Column(length = 255)

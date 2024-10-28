@@ -12,12 +12,12 @@ import java.util.Optional;
 
 public interface PublicOfficeRepository extends JpaRepository<PublicOffice, Long> {
 
-    @Query(value = "SELECT new kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantResponse(r.id, r.restaurantName, r.link, r.category, r.detailCategory, r.addressName, r.roadAddressName, r.latitude, r.longitude, h.publicOffice.id, COUNT(h)) " +
+    @Query(value = "SELECT new kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantResponse(r.id, r.restaurantName, r.phone, r.link, r.category, r.detailCategory, r.addressName, r.roadAddressName, r.latitude, r.longitude, h.publicOffice.id, COUNT(h), AVG(rev.point)) " +
             "FROM History h " +
             "JOIN h.restaurant r " +
+            "LEFT JOIN r.reviews rev " +
             "WHERE h.publicOffice.id = :publicOfficeId " +
             "GROUP BY h.restaurant.id " +
             "ORDER BY COUNT(h) desc")
     List<RestaurantResponse> findRestaurantsByPublicOfficeId(@Param("publicOfficeId") Long publicOfficeId);
-
 }

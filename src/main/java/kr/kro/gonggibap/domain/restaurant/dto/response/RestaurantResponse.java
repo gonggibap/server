@@ -12,6 +12,7 @@ import java.math.BigDecimal;
 public class RestaurantResponse {
     private Long restaurantId;
     private String restaurantName;
+    private String phone;
     private String restaurantLink;
     private String restaurantCategory;
     private String restaurantDetailCategory;
@@ -21,4 +22,5 @@ public class RestaurantResponse {
     private BigDecimal restaurantLongitude;
     private Long publicOfficeId;
     private Long visitCount;
+    private Double pointAvg;
 }
