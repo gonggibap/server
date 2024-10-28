@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.net.BindException;
 
+import static kr.kro.gonggibap.core.error.CommonResponse.customFailure;
 import static kr.kro.gonggibap.core.error.CommonResponse.failure;
 
 @Slf4j
@@ -21,7 +22,7 @@ public class ErrorHandler {
         log.warn(e.getMessage());
         return ResponseEntity
                 .status(e.getErrorCode().getStatus())
-                .body(failure(e.getMessage()));
+                .body(failure(e));
     }
 
     @ExceptionHandler(BindException.class)
@@ -29,7 +30,7 @@ public class ErrorHandler {
         log.warn(e.getMessage());
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
-                .body(failure(e.getMessage()));
+                .body(customFailure("잘못된 요청 입니다.", HttpStatus.BAD_REQUEST.value()));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -37,7 +38,7 @@ public class ErrorHandler {
         log.warn(e.getMessage());
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
-                .body(failure(e.getMessage()));
+                .body(customFailure("잘못된 요청 입니다.", HttpStatus.BAD_REQUEST.value()));
     }
 
 }
