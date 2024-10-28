@@ -43,7 +43,8 @@ public interface ReviewControllerSwagger {
             @ApiResponse(responseCode = "400", description = "리뷰 점수는 필수", content = @Content(mediaType = "application/json")),
             @ApiResponse(responseCode = "404", description = "식당을 찾을 수 없습니다.", content = @Content(mediaType = "application/json"))
     })
-    @PostMapping() ResponseEntity<?> createReview(@Parameter(hidden = true) @LoginUser User user,
+    @PostMapping("/restaurant/{id}") ResponseEntity<?> createReview(@Parameter(hidden = true) @LoginUser User user,
+                                                        @PathVariable Long id,
                                                         @Valid @ModelAttribute ReviewCreateRequest request);
 
     @Operation(summary = "리뷰 삭제",

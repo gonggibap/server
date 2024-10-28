@@ -12,8 +12,6 @@ import java.util.List;
 @AllArgsConstructor
 public class ReviewCreateRequest {
 
-    private Long restaurantId;
-
     @NotNull(message = "리뷰 내용을 입력해주세요.")
     @NotBlank(message = "리뷰 내용을 입력해주세요.")
     private String content;

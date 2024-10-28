@@ -44,10 +44,11 @@ public class ReviewController implements ReviewControllerSwagger{
      * @param request 식당 ID, 리뷰 내용, 리뷰 점수, 이미지
      * @return
      */
-    @PostMapping(value = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/restaurant/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> createReview(@LoginUser User user,
+                                            @PathVariable Long id,
                                             @Valid @ModelAttribute ReviewCreateRequest request) {
-        Long reviewId = reviewService.createReview(request, user);
+        Long reviewId = reviewService.createReview(request, id, user);
 
         return ResponseEntity.ok(success(new ReviewCreateResponse(reviewId)));
     }

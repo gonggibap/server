@@ -41,8 +41,8 @@ public class ReviewService {
      * @return
      */
     @Transactional
-    public Long createReview(ReviewCreateRequest request, User user) {
-        Restaurant findRestaurant = restaurantService.findRestaurantById(request.getRestaurantId());
+    public Long createReview(ReviewCreateRequest request, Long restaurantId, User user) {
+        Restaurant findRestaurant = restaurantService.findRestaurantById(restaurantId);
         Review savedReview = reviewRepository.save(new Review(request.getContent(), request.getPoint(), user, findRestaurant));
         List<MultipartFile> images = request.getImages();
 
