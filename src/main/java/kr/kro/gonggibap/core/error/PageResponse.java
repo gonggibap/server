@@ -11,6 +11,6 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 public class PageResponse<T> {
-    private int totalPages;
+    private Integer totalPages;
     private List<T> content;
 }
