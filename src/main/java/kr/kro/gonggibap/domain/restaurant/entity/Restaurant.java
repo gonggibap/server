@@ -55,7 +55,7 @@ public class Restaurant {
     private List<History> histories;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "code", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    @JoinColumn(name = "address_code", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Address address;
 
     @OneToMany(mappedBy = "restaurant", cascade = CascadeType.REMOVE)
