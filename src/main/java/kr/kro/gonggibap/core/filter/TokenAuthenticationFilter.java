@@ -5,6 +5,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import kr.kro.gonggibap.core.config.jwt.TokenProvider;
+import kr.kro.gonggibap.core.error.ErrorCode;
+import kr.kro.gonggibap.core.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -31,6 +33,9 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         // 가져온 값에서 Bearer 접두사 제거
         String token = getAccessToken(authorizationHeader);
 
+        if (token == null) {
+            throw new CustomException(ErrorCode.NOT_AUTHORIZATION);
+        }
         log.info("token dto: {}", token);
 
         // 가져온 토큰이 유효한지 확인
