@@ -1,4 +1,4 @@
-package kr.kro.gonggibap.core.util;
+package kr.kro.gonggibap.domain.restaurant.service.validator;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -7,13 +7,14 @@ import java.util.Arrays;
 import java.util.List;
 
 import static kr.kro.gonggibap.core.constant.Districts.DISTRICTS;
-import static kr.kro.gonggibap.core.validator.RestaurantSearchQueryValidator.validateQuery;
+import static kr.kro.gonggibap.domain.restaurant.service.validator.RestaurantValidator.validateQuery;
 
 @Slf4j
-public class RestaurantSearchUtil {
+public class RestaurantQueryParser {
     /**
      * 사용자의 검색어 중에서 구와 음식을 분리
      * (ex. 강남 칼국수 => district = '강남구', food = '칼국수'
+     *
      * @param query : 사용자 검색어
      * @return [지역구, 음식], nullable
      */
@@ -35,7 +36,7 @@ public class RestaurantSearchUtil {
             String tmpDistrict = findDistrict(word);
 
             // 첫 지역구만 등록하도록 함(ex. 종로구 양천구 이렇게 오면 => 종로구만)
-            if(district == null && tmpDistrict != null) district = tmpDistrict;
+            if (district == null && tmpDistrict != null) district = tmpDistrict;
 
             // 해당 단어가 지역구 이름이 아니리면
             if (tmpDistrict == null) foodWords.add(word); // 음식으로 추가
@@ -46,15 +47,16 @@ public class RestaurantSearchUtil {
         // 결과 출력
         log.info("District: {}, food: {}", district, food);
 
-        return new ArrayList<>(Arrays.asList(district, food));
+        return Arrays.asList(district, food);
     }
 
     /**
      * 들어온 단어가 지역구인지 찾아주는 메소드
+     *
      * @param word : 사용자 검색어 split한 단어
      * @return word에 대해 찾은 지역구, nullable
      */
-    private static String findDistrict(String word){
+    private static String findDistrict(String word) {
         for (String dist : DISTRICTS) {
             if (dist.contains(word)) { // 단어가 지역 이름을 포함하고 있다면
                 return dist; // 가장 먼저 발견된 지역 이름 저장
