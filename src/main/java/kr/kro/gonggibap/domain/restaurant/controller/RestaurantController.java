@@ -1,8 +1,6 @@
 package kr.kro.gonggibap.domain.restaurant.controller;
 
-import kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantPageResponse;
-import kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantResponse;
-import kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantSearchPageResponse;
+import kr.kro.gonggibap.core.error.PageResponse;
 import kr.kro.gonggibap.domain.restaurant.service.RestaurantService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,7 +37,7 @@ public class RestaurantController implements RestaurantControllerSwagger{
                                            @RequestParam List<BigDecimal> longitudes,
                                            @PageableDefault(page = 0, size = 30) Pageable pageable) {
 
-        RestaurantPageResponse response = restaurantService.getRestaurant(latitudes, longitudes, pageable);
+        PageResponse<?> response = restaurantService.getRestaurant(latitudes, longitudes, pageable);
         return ResponseEntity.ok(response);
     }
 
@@ -54,8 +52,7 @@ public class RestaurantController implements RestaurantControllerSwagger{
     @GetMapping("/by-dong")
     public ResponseEntity<?> getRestaurantByAddressCode(@RequestParam String dongCode,
                                                         @PageableDefault(page = 0, size = 30) Pageable pageable) {
-
-        List<RestaurantResponse> response = restaurantService.getRestaurantByAddressCode(dongCode, pageable);
+        PageResponse<?> response = restaurantService.getRestaurantByAddressCode(dongCode, pageable);
         return ResponseEntity.ok(response);
     }
 
@@ -70,7 +67,7 @@ public class RestaurantController implements RestaurantControllerSwagger{
     @GetMapping("/search")
     public ResponseEntity<?> searchRestaurant(@RequestParam String query,
                                               @PageableDefault(page = 0, size = 10) Pageable pageable) {
-        RestaurantSearchPageResponse response = restaurantService.searchRestaurant(query, pageable);
+        PageResponse<?> response = restaurantService.searchRestaurant(query, pageable);
         return ResponseEntity.ok(response);
     }
 

@@ -1,9 +1,8 @@
 package kr.kro.gonggibap.domain.restaurant.service;
 
+import kr.kro.gonggibap.core.error.PageResponse;
 import kr.kro.gonggibap.core.exception.CustomException;
-import kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantPageResponse;
 import kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantResponse;
-import kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantSearchPageResponse;
 import kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantSearchResponse;
 import kr.kro.gonggibap.domain.restaurant.entity.Restaurant;
 import kr.kro.gonggibap.domain.restaurant.repository.AddressRepository;
@@ -52,7 +51,7 @@ public class RestaurantService {
      * @param pageable
      * @return RestaurantPageResponse response
      */
-    public RestaurantPageResponse getRestaurant(List<BigDecimal> latitudes, List<BigDecimal> longitudes, Pageable pageable) {
+    public PageResponse<?> getRestaurant(List<BigDecimal> latitudes, List<BigDecimal> longitudes, Pageable pageable) {
 
         validateCoordinate(latitudes, longitudes);
 
@@ -71,7 +70,7 @@ public class RestaurantService {
             throw new CustomException(COORDINATE_OUT_OF_BOUND);
         }
 
-        return new RestaurantPageResponse(restaurantResponses.getTotalPages(),
+        return new PageResponse<>(restaurantResponses.getTotalPages(),
                 restaurantResponses.getContent());
     }
 
@@ -83,7 +82,7 @@ public class RestaurantService {
      * @param query
      * @param pageable
      */
-    public RestaurantSearchPageResponse searchRestaurant(String query, Pageable pageable) {
+    public PageResponse<?> searchRestaurant(String query, Pageable pageable) {
         List<String> parseResult = parseQuery(query); // 파싱된 결과 값
         String district = parseResult.get(0);
         String food = parseResult.get(1);
@@ -99,7 +98,7 @@ public class RestaurantService {
             restaurantSearchResponses = restaurantRepository.searchRestaurantByFoodAndDistrict(food, district, pageable);
         }
 
-        return new RestaurantSearchPageResponse(restaurantSearchResponses.getTotalPages(),
+        return new PageResponse<>(restaurantSearchResponses.getTotalPages(),
                 restaurantSearchResponses.getContent());
     }
 
@@ -111,14 +110,16 @@ public class RestaurantService {
      * @param pageable
      * @return
      */
-    public List<RestaurantResponse> getRestaurantByAddressCode(String dongCode, Pageable pageable) {
-        List<RestaurantResponse> restaurants = restaurantRepository.findByAddressCode(dongCode, pageable).getContent();
-
+    public PageResponse<?> getRestaurantByAddressCode(String dongCode, Pageable pageable) {
+        Page<RestaurantResponse> pageResult = restaurantRepository.findByAddressCode(dongCode, pageable);
+        pageResult.getContent();
         // 주수 코드 기반 식당 리스트가 비어있다면
-        if (restaurants.isEmpty()) {
+        if (pageResult.isEmpty()) {
             throw new CustomException(DONG_NOT_FOUND_ERROR);
         }
 
-        return restaurants;
+        int totalPages = pageResult.getTotalPages(); // 전체 페이지 수
+
+        return new PageResponse<>(totalPages, pageResult.getContent());
     }
 }
