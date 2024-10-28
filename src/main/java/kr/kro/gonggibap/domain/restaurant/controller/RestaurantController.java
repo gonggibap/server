@@ -1,6 +1,7 @@
 package kr.kro.gonggibap.domain.restaurant.controller;
 
 import kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantPageResponse;
+import kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantResponse;
 import kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantSearchPageResponse;
 import kr.kro.gonggibap.domain.restaurant.service.RestaurantService;
 import lombok.RequiredArgsConstructor;
@@ -20,13 +21,14 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/restaurants")
-public class RestaurantController {
+public class RestaurantController implements RestaurantControllerSwagger{
 
     private final RestaurantService restaurantService;
 
     /**
      * 범위 내 식당 조회
      * 조회 시 방문수 내림차순 정렬
+     *
      * @param latitudes
      * @param longitudes
      * @param pageable
@@ -34,8 +36,8 @@ public class RestaurantController {
      */
     @GetMapping()
     public ResponseEntity<?> getRestaurant(@RequestParam List<BigDecimal> latitudes,
-                                                @RequestParam List<BigDecimal> longitudes,
-                                                @PageableDefault(page = 0, size = 30) Pageable pageable){
+                                           @RequestParam List<BigDecimal> longitudes,
+                                           @PageableDefault(page = 0, size = 30) Pageable pageable) {
 
         RestaurantPageResponse response = restaurantService.getRestaurant(latitudes, longitudes, pageable);
         return ResponseEntity.ok(response);
@@ -44,6 +46,7 @@ public class RestaurantController {
     /**
      * 주소 코드 기반 식당 조회
      * 조회 시 방문수 내림차순 정렬
+     *
      * @param dongCode
      * @param pageable
      * @return
@@ -52,20 +55,21 @@ public class RestaurantController {
     public ResponseEntity<?> getRestaurantByAddressCode(@RequestParam String dongCode,
                                                         @PageableDefault(page = 0, size = 30) Pageable pageable) {
 
-        RestaurantPageResponse response = restaurantService.getRestaurantByAddressCode(dongCode, pageable);
+        List<RestaurantResponse> response = restaurantService.getRestaurantByAddressCode(dongCode, pageable);
         return ResponseEntity.ok(response);
     }
 
     /**
      * 사용자의 검색어에 따른 음식점 검색
      * 일치 여부(score)에 따른 내림차순 정렬
+     *
      * @param query
      * @param pageable
      * @return RestaurantPageResponse response
      */
     @GetMapping("/search")
     public ResponseEntity<?> searchRestaurant(@RequestParam String query,
-                                                @PageableDefault(page = 0, size = 30) Pageable pageable) {
+                                              @PageableDefault(page = 0, size = 10) Pageable pageable) {
         RestaurantSearchPageResponse response = restaurantService.searchRestaurant(query, pageable);
         return ResponseEntity.ok(response);
     }
