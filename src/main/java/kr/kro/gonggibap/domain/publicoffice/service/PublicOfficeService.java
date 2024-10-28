@@ -2,8 +2,11 @@ package kr.kro.gonggibap.domain.publicoffice.service;
 
 import kr.kro.gonggibap.core.exception.CustomException;
 import kr.kro.gonggibap.domain.publicoffice.dto.response.PublicOfficeResponse;
+import kr.kro.gonggibap.domain.publicoffice.dto.response.PublicOfficeRestaurantResponse;
 import kr.kro.gonggibap.domain.publicoffice.entity.PublicOffice;
 import kr.kro.gonggibap.domain.publicoffice.repository.PublicOfficeRepository;
+import kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantResponse;
+import kr.kro.gonggibap.domain.restaurant.entity.Restaurant;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -23,11 +26,13 @@ public class PublicOfficeService {
 
     private final PublicOfficeRepository publicOfficeRepository;
 
-    public PublicOfficeResponse getPublicOffice(Long id) {
+    public PublicOfficeRestaurantResponse getPublicOffice(Long id) {
         PublicOffice publicOffice = publicOfficeRepository.findById(id)
                 .orElseThrow(() -> new CustomException(NOT_FOUND_PUBLIC_OFFICE));
 
-        return getPublicOfficeResponse(publicOffice);
+        List<RestaurantResponse> restaurantResponses = publicOfficeRepository.findRestaurantsByPublicOfficeId(id);
+
+        return getPublicOfficeResponse(publicOffice, restaurantResponses);
     }
 
 
