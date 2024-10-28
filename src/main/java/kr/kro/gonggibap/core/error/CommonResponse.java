@@ -16,6 +16,8 @@ public class CommonResponse<T> {
     private boolean success;
     private T data;
     private String error;
+
+    @JsonInclude(JsonInclude.Include.NON_DEFAULT)  // 기본값 0일 때 필드를 생략
     private int errorCode;
 
     public CommonResponse(final boolean success, final T data) {
@@ -37,7 +39,7 @@ public class CommonResponse<T> {
         return new CommonResponse<>(false, error.getMessage(), error.getErrorCode().getStatusCode());
     }
 
-    public static <T> CommonResponse<T> customFailure(String error, int errorCode) {
+    public static <T> CommonResponse<T> failure(String error, int errorCode) {
         return new CommonResponse<>(false, error, errorCode);
     }
 }
