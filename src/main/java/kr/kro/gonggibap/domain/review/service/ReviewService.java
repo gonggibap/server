@@ -14,8 +14,10 @@ import kr.kro.gonggibap.domain.review.repository.ReviewRepository;
 import kr.kro.gonggibap.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.locationtech.jts.util.CollectionUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -47,7 +49,7 @@ public class ReviewService {
         List<MultipartFile> images = request.getImages();
 
         // 첨부한 이미지가 있는 경우에만 S3에 업로드
-        if(!images.isEmpty()){
+        if(!CollectionUtils.isEmpty(images)){
             List<String> imageUrls = images.stream()
                     .map(image -> {
                         try {

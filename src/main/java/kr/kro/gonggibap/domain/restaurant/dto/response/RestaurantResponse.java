@@ -21,6 +21,7 @@ public class RestaurantResponse {
     private BigDecimal restaurantLatitude;
     private BigDecimal restaurantLongitude;
     private Long publicOfficeId;
+    private String publicOfficeName;
     private Long visitCount;
     private Double pointAvg;
 }
