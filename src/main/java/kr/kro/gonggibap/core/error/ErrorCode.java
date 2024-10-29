@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 public enum ErrorCode {
     INTERNAL_SERVER_ERROR(  HttpStatus.INTERNAL_SERVER_ERROR, HttpStatus.INTERNAL_SERVER_ERROR.value(), "서버 에러입니다."),
     INVALID_INPUT_VALUE(    HttpStatus.BAD_REQUEST,      HttpStatus.BAD_REQUEST.value(), "잘못된 입력 값입니다."),
+    FILE_SIZE_EXCEED(HttpStatus.BAD_REQUEST, HttpStatus.BAD_REQUEST.value(), "최대 파일 크기는 10MB로 초과했습니다."),
 
     // 인증 && 인가
     TOKEN_EXPIRED(           HttpStatus.UNAUTHORIZED,    HttpStatus.UNAUTHORIZED.value(), "토큰이 만료되었습니다."),

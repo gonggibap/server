@@ -46,16 +46,19 @@ public class ReviewService {
         Review savedReview = reviewRepository.save(new Review(request.getContent(), request.getPoint(), user, findRestaurant));
         List<MultipartFile> images = request.getImages();
 
-        List<String> imageUrls = images.stream()
-                .map(image -> {
-                    try {
-                        return imageS3UploadService.saveReviewFile(image);
-                    } catch (IOException e) {
-                        throw new CustomException(ErrorCode.FILE_UPLOAD_ERROR);
-                    }
-                }).toList();
+        // 첨부한 이미지가 있는 경우에만 S3에 업로드
+        if(!images.isEmpty()){
+            List<String> imageUrls = images.stream()
+                    .map(image -> {
+                        try {
+                            return imageS3UploadService.saveReviewFile(image);
+                        } catch (IOException e) {
+                            throw new CustomException(ErrorCode.FILE_UPLOAD_ERROR);
+                        }
+                    }).toList();
 
-        imageService.createImages(savedReview, imageUrls);
+            imageService.createImages(savedReview, imageUrls);
+        }
 
         return savedReview.getId();
     }
