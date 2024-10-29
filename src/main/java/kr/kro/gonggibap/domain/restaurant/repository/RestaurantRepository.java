@@ -12,10 +12,11 @@ import java.util.List;
 
 public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {
 
-    @Query(value = "SELECT new kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantResponse(r.id, r.restaurantName, r.phone, r.link, r.category, r.detailCategory, r.addressName, r.roadAddressName, r.latitude, r.longitude, h.publicOffice.id, h.publicOffice.name, COUNT(distinct h), AVG(rev.point)) " +
+    @Query(value = "SELECT new kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantResponse(r.id, r.restaurantName, r.phone, r.link, r.category, r.detailCategory, r.addressName, r.roadAddressName, r.latitude, r.longitude, h.publicOffice.id, p.name, COUNT(distinct h), AVG(rev.point)) " +
             "FROM Restaurant r " +
             "LEFT JOIN r.histories h " +
             "LEFT JOIN r.reviews rev " +
+            "LEFT JOIN h.publicOffice p " +
             "WHERE FUNCTION('ST_Contains', FUNCTION('ST_GeomFromText', :polygon, 4326), r.location) = true " +
             "AND (:category IS NULL OR r.detailCategory = :category) " +
             "GROUP BY r.id " +
