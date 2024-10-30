@@ -62,4 +62,19 @@ public interface ReviewControllerSwagger {
     @DeleteMapping("/{id}")
     ResponseEntity<?> deleteReview(@Parameter(hidden = true) @LoginUser User user,
                                     @PathVariable Long id);
-    }
+
+    @Operation(summary = "작성한 리뷰 조회",
+            description = "로그인한 사용자가 작성한 전체 리뷰 조회",
+            parameters = {
+                    @Parameter(name = AUTHORIZATION, description = "access token", in = ParameterIn.HEADER, required = true)
+            }
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "조회 성공"),
+            @ApiResponse(responseCode = "401", description = "로그인이 필요합니다.", content = @Content(mediaType = "application/json"))
+    })
+    @GetMapping("/my")
+    ResponseEntity<?> getMyReviews(@LoginUser User user);
+    
+    
+}

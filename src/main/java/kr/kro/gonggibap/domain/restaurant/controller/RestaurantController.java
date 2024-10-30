@@ -35,10 +35,10 @@ public class RestaurantController implements RestaurantControllerSwagger{
     @GetMapping()
     public ResponseEntity<?> getRestaurant(@RequestParam List<BigDecimal> latitudes,
                                            @RequestParam List<BigDecimal> longitudes,
-                                           @RequestParam(required = false) String category,
+                                           @RequestParam(required = false) List<String> categories,
                                            @PageableDefault(page = 0, size = 30) Pageable pageable) {
 
-        PageResponse<?> response = restaurantService.getRestaurant(latitudes, longitudes, category, pageable);
+        PageResponse<?> response = restaurantService.getRestaurant(latitudes, longitudes, categories, pageable);
         return ResponseEntity.ok(response);
     }
 

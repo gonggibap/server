@@ -18,10 +18,10 @@ public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {
             "LEFT JOIN r.reviews rev " +
             "LEFT JOIN h.publicOffice p " +
             "WHERE FUNCTION('ST_Contains', FUNCTION('ST_GeomFromText', :polygon, 4326), r.location) = true " +
-            "AND (:category IS NULL OR r.detailCategory = :category) " +
+            "AND (:categories IS NULL OR r.detailCategory IN :categories) " +
             "GROUP BY r.id " +
             "ORDER BY COUNT(distinct h) desc")
-    Page<RestaurantResponse> getRestaurant(String polygon, String category, Pageable pageable);
+    Page<RestaurantResponse> getRestaurant(String polygon, List<String> categories, Pageable pageable);
 
     /**
      * N-gram 기반 fulltext index를 restaurants food기반으로 검색

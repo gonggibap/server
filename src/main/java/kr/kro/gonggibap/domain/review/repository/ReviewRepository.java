@@ -21,4 +21,6 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
             "LEFT JOIN FETCH r.images " +
             "WHERE r.id = :reviewId")
     Optional<Review> findByIdWithImages(Long reviewId);
+
+    List<Review> findAllByUserId(Long userId);
 }

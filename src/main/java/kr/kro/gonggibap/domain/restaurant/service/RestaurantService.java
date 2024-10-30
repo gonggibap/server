@@ -51,7 +51,7 @@ public class RestaurantService {
      * @param pageable
      * @return RestaurantPageResponse response
      */
-    public PageResponse<?> getRestaurant(List<BigDecimal> latitudes, List<BigDecimal> longitudes, String category, Pageable pageable) {
+    public PageResponse<?> getRestaurant(List<BigDecimal> latitudes, List<BigDecimal> longitudes, List<String> categories, Pageable pageable) {
 
         validateCoordinate(latitudes, longitudes);
 
@@ -65,7 +65,7 @@ public class RestaurantService {
         Page<RestaurantResponse> restaurantResponses;
 
         try {
-            restaurantResponses = restaurantRepository.getRestaurant(polygon.toString(), category, pageable);
+            restaurantResponses = restaurantRepository.getRestaurant(polygon.toString(), categories, pageable);
         } catch (Exception e) {
             throw new CustomException(COORDINATE_OUT_OF_BOUND);
         }
