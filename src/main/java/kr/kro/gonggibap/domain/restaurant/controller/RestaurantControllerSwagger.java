@@ -34,7 +34,7 @@ public interface RestaurantControllerSwagger {
     @GetMapping()
     ResponseEntity<?> getRestaurant(@RequestParam List<BigDecimal> latitudes,
                                     @RequestParam List<BigDecimal> longitudes,
-                                    @RequestParam String category,
+                                    @RequestParam List<String> categories,
                                     @PageableDefault(page = 0, size = 30) Pageable pageable);
 
     @Operation(
