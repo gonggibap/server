@@ -67,4 +67,11 @@ public class ReviewController implements ReviewControllerSwagger{
         return ResponseEntity.status(HttpStatus.NO_CONTENT)
                 .build();
     }
+
+    @GetMapping("/my")
+    public ResponseEntity<?> getMyReviews(@LoginUser User user) {
+        List<ReviewResponse> myReviews = reviewService.getMyReviews(user);
+
+        return ResponseEntity.ok(success(myReviews));
+    }
 }
