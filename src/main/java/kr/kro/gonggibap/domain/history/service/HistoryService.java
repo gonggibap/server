@@ -3,6 +3,7 @@ package kr.kro.gonggibap.domain.history.service;
 import kr.kro.gonggibap.core.error.PageResponse;
 import kr.kro.gonggibap.core.exception.CustomException;
 import kr.kro.gonggibap.domain.history.dto.response.HistoryResponse;
+import kr.kro.gonggibap.domain.history.entity.History;
 import kr.kro.gonggibap.domain.history.repository.HistoryRepository;
 import kr.kro.gonggibap.domain.history.service.validator.HistoryValidator;
 import kr.kro.gonggibap.domain.restaurant.service.RestaurantService;
@@ -23,11 +24,11 @@ import static kr.kro.gonggibap.domain.history.service.validator.HistoryValidator
 @RequiredArgsConstructor
 @Service
 public class HistoryService {
-
+    private final HistoryRepository historyRepository;
     /**
      * 특정 식당 ID를 통해 해당 식당의 구청 방문 기록 반환
      * 우선 조회하려는 레스토랑 id가 있는지 유효성 검사
-     * 
+     *
      * @param restaurantId
      * @return List<HistoryResponse>
      */
@@ -45,6 +46,9 @@ public class HistoryService {
         return new PageResponse<>(histories.getTotalPages(),
                 histories.getContent());
     }
-    private final RestaurantService restaurantService;
-    private final HistoryRepository historyRepository;
+
+    public List<History> bulkByRestaurantIds(List<Long> restaurantIds) {
+        return historyRepository.bulkByRestaurantIds(restaurantIds);
+    }
+
 }

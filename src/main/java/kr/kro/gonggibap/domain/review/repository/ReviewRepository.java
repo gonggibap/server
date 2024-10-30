@@ -3,6 +3,7 @@ package kr.kro.gonggibap.domain.review.repository;
 import kr.kro.gonggibap.domain.review.entity.Review;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,4 +24,10 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     Optional<Review> findByIdWithImages(Long reviewId);
 
     List<Review> findAllByUserId(Long userId);
+
+    @Query("select rv " +
+            "from Review rv " +
+            "join fetch Restaurant r " +
+            "where rv.restaurant.id in :restaurantIds")
+    List<Review> bulkByRestaurantId(@Param("restaurantIds") List<Long> restaurantIds);
 }

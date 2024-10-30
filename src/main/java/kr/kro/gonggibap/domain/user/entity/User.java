@@ -1,9 +1,11 @@
 package kr.kro.gonggibap.domain.user.entity;
 
 import jakarta.persistence.*;
+import kr.kro.gonggibap.domain.restaurant.entity.FavoriteRestaurant;
 import kr.kro.gonggibap.domain.review.entity.Review;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Table(
@@ -34,6 +36,9 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<Review> reviews;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+    private List<FavoriteRestaurant> favorites = new ArrayList<>();
 
     public void update(String name) {
         this.name = name;
