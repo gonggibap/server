@@ -1,6 +1,7 @@
 package kr.kro.gonggibap.domain.history.service;
 
 import kr.kro.gonggibap.core.error.PageResponse;
+import kr.kro.gonggibap.core.exception.CustomException;
 import kr.kro.gonggibap.domain.history.dto.response.HistoryResponse;
 import kr.kro.gonggibap.domain.history.repository.HistoryRepository;
 import kr.kro.gonggibap.domain.history.service.validator.HistoryValidator;
@@ -14,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static kr.kro.gonggibap.core.error.ErrorCode.NOT_FOUND_RESTAURANT;
 import static kr.kro.gonggibap.domain.history.service.validator.HistoryValidator.validateHistory;
 
 @Slf4j
@@ -32,7 +34,9 @@ public class HistoryService {
     public PageResponse<HistoryResponse> getHistory(Long restaurantId, Pageable pageable) {
 
         // 우선 레스토링이 존재하는지 확인
-        restaurantService.findRestaurantById(restaurantId);
+        if(!historyRepository.existsById(restaurantId)) {
+            throw new CustomException(NOT_FOUND_RESTAURANT);
+        }
 
         Page<HistoryResponse> histories = historyRepository.findHistoryByRestaurantId(restaurantId, pageable);
 

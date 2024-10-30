@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static kr.kro.gonggibap.core.error.CommonResponse.success;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -34,6 +36,6 @@ public class HistoryController implements HistoryControllerSwagger {
         PageResponse<HistoryResponse> response = historyService.getHistory(restaurantId, pageable);
 
 
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(success(response));
     }
 }
