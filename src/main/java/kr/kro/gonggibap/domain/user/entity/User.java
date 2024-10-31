@@ -20,6 +20,9 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString(of = {"id", "email","userRole"})
 public class User {
+
+    private static final Long POINT = 10L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
@@ -49,10 +52,10 @@ public class User {
     }
 
     public void increaseScore() {
-        this.score += 10;
+        this.score += POINT;
     }
 
     public void decreaseScore() {
-        if (this.score >= 10) this.score -= 10;
+        if (this.score >= POINT) this.score -= POINT;
     }
 }
