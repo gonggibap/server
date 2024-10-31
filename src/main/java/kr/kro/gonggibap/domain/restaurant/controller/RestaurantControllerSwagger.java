@@ -4,12 +4,12 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.math.BigDecimal;
@@ -32,10 +32,27 @@ public interface RestaurantControllerSwagger {
             )
     })
     @GetMapping()
-    ResponseEntity<?> getRestaurant(@RequestParam List<BigDecimal> latitudes,
-                                    @RequestParam List<BigDecimal> longitudes,
-                                    @RequestParam List<String> categories,
-                                    @PageableDefault(page = 0, size = 30) Pageable pageable);
+    ResponseEntity<?> getRestaurants(@RequestParam List<BigDecimal> latitudes,
+                                     @RequestParam List<BigDecimal> longitudes,
+                                     @RequestParam String category,
+                                     @PageableDefault(page = 0, size = 30) Pageable pageable);
+
+    @Operation(
+            summary = "식당 단일 조회", description = "식당 ID 대한 정보를 조회함")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "조회 성공",
+                    content = @Content(mediaType = "application/json")
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "주어진 ID와 일치하는 식당이 없음",
+                    content = @Content(mediaType = "application/json")
+            )
+    })
+    @GetMapping("/{id}")
+    ResponseEntity<?> getRestaurant(@PathVariable Long id);
 
     @Operation(
             summary = "동 기반 식당 조회", description = "동 코드를 토대로 식당에 대한 정보를 조회함. 기본 30개씩 조회")

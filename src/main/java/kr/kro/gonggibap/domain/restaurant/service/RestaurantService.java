@@ -5,7 +5,6 @@ import kr.kro.gonggibap.core.exception.CustomException;
 import kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantResponse;
 import kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantSearchResponse;
 import kr.kro.gonggibap.domain.restaurant.entity.Restaurant;
-import kr.kro.gonggibap.domain.restaurant.repository.AddressRepository;
 import kr.kro.gonggibap.domain.restaurant.repository.RestaurantRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -51,7 +50,7 @@ public class RestaurantService {
      * @param pageable
      * @return RestaurantPageResponse response
      */
-    public PageResponse<?> getRestaurant(List<BigDecimal> latitudes, List<BigDecimal> longitudes, List<String> categories, Pageable pageable) {
+    public PageResponse<?> getRestaurants(List<BigDecimal> latitudes, List<BigDecimal> longitudes, String category, Pageable pageable) {
 
         validateCoordinate(latitudes, longitudes);
 
@@ -65,7 +64,7 @@ public class RestaurantService {
         Page<RestaurantResponse> restaurantResponses;
 
         try {
-            restaurantResponses = restaurantRepository.getRestaurant(polygon.toString(), categories, pageable);
+            restaurantResponses = restaurantRepository.getRestaurants(polygon.toString(), category, pageable);
         } catch (Exception e) {
             throw new CustomException(COORDINATE_OUT_OF_BOUND);
         }
@@ -73,6 +72,12 @@ public class RestaurantService {
         return new PageResponse<>(restaurantResponses.getTotalPages(),
                 restaurantResponses.getContent());
     }
+
+    public RestaurantResponse getRestaurant(Long id) {
+        return restaurantRepository.getRestaurantById(id)
+                .orElseThrow(() -> new CustomException(NOT_FOUND_RESTAURANT));
+    }
+
 
     /**
      * 1. 음식 기반 검색 (ex. 피자, 치킨, 칼국수 치킨)

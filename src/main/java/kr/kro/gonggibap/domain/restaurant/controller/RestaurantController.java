@@ -1,19 +1,19 @@
 package kr.kro.gonggibap.domain.restaurant.controller;
 
 import kr.kro.gonggibap.core.error.PageResponse;
+import kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantResponse;
 import kr.kro.gonggibap.domain.restaurant.service.RestaurantService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.util.List;
+
+import static kr.kro.gonggibap.core.error.CommonResponse.success;
 
 @Slf4j
 @RestController
@@ -33,14 +33,26 @@ public class RestaurantController implements RestaurantControllerSwagger{
      * @return RestaurantPageResponse response
      */
     @GetMapping()
-    public ResponseEntity<?> getRestaurant(@RequestParam List<BigDecimal> latitudes,
-                                           @RequestParam List<BigDecimal> longitudes,
-                                           @RequestParam(required = false) List<String> categories,
-                                           @PageableDefault(page = 0, size = 30) Pageable pageable) {
+    public ResponseEntity<?> getRestaurants(@RequestParam List<BigDecimal> latitudes,
+                                            @RequestParam List<BigDecimal> longitudes,
+                                            @RequestParam(required = false) String category,
+                                            @PageableDefault(page = 0, size = 30) Pageable pageable) {
 
-        PageResponse<?> response = restaurantService.getRestaurant(latitudes, longitudes, categories, pageable);
+        PageResponse<?> response = restaurantService.getRestaurants(latitudes, longitudes, category, pageable);
         return ResponseEntity.ok(response);
     }
+
+    /**
+     * 식당 ID 단일 조회
+     * @param id
+     * @return
+     */
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getRestaurant(@PathVariable Long id) {
+        RestaurantResponse response = restaurantService.getRestaurant(id);
+        return ResponseEntity.ok(success(response));
+    }
+
 
     /**
      * 주소 코드 기반 식당 조회
