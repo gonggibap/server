@@ -26,23 +26,4 @@ public class RestaurantResponse {
     private String publicOfficeName;
     private Long visitCount;
     private Double pointAvg;
-
-    public static RestaurantResponse of(Restaurant restaurant, PublicOffice publicOffice, Long visitCount, Double pointAvg) {
-        RestaurantResponse response = new RestaurantResponse();
-        response.restaurantId = restaurant.getId();
-        response.restaurantName = restaurant.getRestaurantName();
-        response.phone = restaurant.getPhone();
-        response.restaurantLink = restaurant.getLink();
-        response.restaurantCategory = restaurant.getCategory();
-        response.restaurantDetailCategory = restaurant.getDetailCategory();
-        response.restaurantAddressName = restaurant.getAddressName();
-        response.restaurantRoadAddressName = restaurant.getRoadAddressName();
-        response.restaurantLatitude = restaurant.getLatitude();
-        response.restaurantLongitude = restaurant.getLongitude();
-        response.publicOfficeId = publicOffice.getId();
-        response.publicOfficeName = publicOffice.getName();
-        response.visitCount = visitCount;
-        response.pointAvg = pointAvg;
-        return response;
-    }
 }
