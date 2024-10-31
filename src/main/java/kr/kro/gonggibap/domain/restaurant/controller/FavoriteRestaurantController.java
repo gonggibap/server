@@ -22,14 +22,16 @@ public class FavoriteRestaurantController {
     private final FavoriteRestaurantService favoriteRestaurantService;
 
     @PostMapping("/{id}")
-    public ResponseEntity<?> doFavorite(@LoginUser User user, @PathVariable Long id) {
+    public ResponseEntity<?> doFavorite(@LoginUser User user,
+                                        @PathVariable Long id) {
         favoriteRestaurantService.doFavoriteRestaurant(user, id);
         return ResponseEntity.ok()
                 .build();
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> unFavorite(@LoginUser User user, @PathVariable Long id) {
+    public ResponseEntity<?> unFavorite(@LoginUser User user,
+                                        @PathVariable Long id) {
         favoriteRestaurantService.unFavoriteRestaurant(user, id);
         return ResponseEntity.ok()
                 .build();
