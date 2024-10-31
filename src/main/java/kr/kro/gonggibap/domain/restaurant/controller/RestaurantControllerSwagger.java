@@ -32,9 +32,10 @@ public interface RestaurantControllerSwagger {
             )
     })
     @GetMapping()
-    ResponseEntity<?> getRestaurants(@RequestParam List<BigDecimal> latitudes,
-                                     @RequestParam List<BigDecimal> longitudes,
-                                     @RequestParam String category,
+    ResponseEntity<?> getRestaurants(@RequestParam(required = false) List<BigDecimal> latitudes,
+                                     @RequestParam(required = false) List<BigDecimal> longitudes,
+                                     @RequestParam(required = false) String category,
+                                     @RequestParam(required = false) String search,
                                      @PageableDefault(page = 0, size = 30) Pageable pageable);
 
     @Operation(
@@ -53,40 +54,4 @@ public interface RestaurantControllerSwagger {
     })
     @GetMapping("/{id}")
     ResponseEntity<?> getRestaurant(@PathVariable Long id);
-
-    @Operation(
-            summary = "동 기반 식당 조회", description = "동 코드를 토대로 식당에 대한 정보를 조회함. 기본 30개씩 조회")
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "조회 성공",
-                    content = @Content(mediaType = "application/json")
-            ),
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "동 코드가 존재하지 않을 시 예외 발생",
-                    content = @Content(mediaType = "application/json")
-            )
-    })
-    @GetMapping("/by-dong")
-    ResponseEntity<?> getRestaurantByAddressCode(@RequestParam String dongCode,
-                                                 @PageableDefault(page = 0, size = 30) Pageable pageable);
-
-    @Operation(
-            summary = "동 기반 식당 조회", description = "동 코드를 토대로 식당에 대한 정보를 조회함. 기본 30개씩 조회")
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "조회 성공",
-                    content = @Content(mediaType = "application/json")
-            ),
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "동 코드가 존재하지 않을 시 예외 발생",
-                    content = @Content(mediaType = "application/json")
-            )
-    })
-    @GetMapping("/search")
-    ResponseEntity<?> searchRestaurant(@RequestParam String query,
-                                       @PageableDefault(page = 0, size = 30) Pageable pageable);
 }

@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import static kr.kro.gonggibap.core.error.ErrorCode.*;
@@ -50,23 +51,45 @@ public class RestaurantService {
      * @param pageable
      * @return RestaurantPageResponse response
      */
-    public PageResponse<?> getRestaurants(List<BigDecimal> latitudes, List<BigDecimal> longitudes, String category, Pageable pageable) {
+    public PageResponse<?> getRestaurants(List<BigDecimal> latitudes, List<BigDecimal> longitudes, String category, String search, Pageable pageable) {
 
-        validateCoordinate(latitudes, longitudes);
+        Page<RestaurantResponse> restaurantResponses = Page.empty();
+        List<String> parseResult = new ArrayList<>();
 
-        StringBuilder polygon = new StringBuilder("POLYGON((");
-        polygon.append(latitudes.get(0)).append(" ").append(longitudes.get(0)).append(", ")
-                .append(latitudes.get(1)).append(" ").append(longitudes.get(1)).append(", ")
-                .append(latitudes.get(2)).append(" ").append(longitudes.get(2)).append(", ")
-                .append(latitudes.get(3)).append(" ").append(longitudes.get(3)).append(", ")
-                .append(latitudes.get(0)).append(" ").append(longitudes.get(0)).append("))");
+        // 검색 로직
+        if(latitudes == null && longitudes == null && search != null) {
+            parseResult = parseQuery(search);
+            String district = parseResult.get(0);
+            String food = parseResult.get(1);
 
-        Page<RestaurantResponse> restaurantResponses;
+            // 식당 이름 검색
+            if (!StringUtils.hasText(district)) { 
+                restaurantResponses = restaurantRepository.searchRestaurantByFood(food, pageable);
+            // 지역 검색
+            } else if (!StringUtils.hasText(food)) {
+                restaurantResponses = restaurantRepository.searchRestaurantByDistrict(district, pageable);
+            // 식당 + 지역 검색
+            } else {
+                restaurantResponses = restaurantRepository.searchRestaurantByFoodAndDistrict(food, district, pageable);
+            }
+        // 현재 위치 지도 조회
+        } else if (latitudes != null && longitudes != null){
+            validateCoordinate(latitudes, longitudes);
 
-        try {
-            restaurantResponses = restaurantRepository.getRestaurants(polygon.toString(), category, pageable);
-        } catch (Exception e) {
-            throw new CustomException(COORDINATE_OUT_OF_BOUND);
+            StringBuilder polygon = new StringBuilder("POLYGON((");
+            polygon.append(latitudes.get(0)).append(" ").append(longitudes.get(0)).append(", ")
+                    .append(latitudes.get(1)).append(" ").append(longitudes.get(1)).append(", ")
+                    .append(latitudes.get(2)).append(" ").append(longitudes.get(2)).append(", ")
+                    .append(latitudes.get(3)).append(" ").append(longitudes.get(3)).append(", ")
+                    .append(latitudes.get(0)).append(" ").append(longitudes.get(0)).append("))");
+
+            try {
+                restaurantResponses = restaurantRepository.getRestaurants(polygon.toString(), category, pageable);
+            } catch (Exception e) {
+                throw new CustomException(COORDINATE_OUT_OF_BOUND);
+            }
+        } else {
+            throw new CustomException(PARAMETER_MISSING_ERROR);
         }
 
         return new PageResponse<>(restaurantResponses.getTotalPages(),
@@ -76,59 +99,5 @@ public class RestaurantService {
     public RestaurantResponse getRestaurant(Long id) {
         return restaurantRepository.getRestaurantById(id)
                 .orElseThrow(() -> new CustomException(NOT_FOUND_RESTAURANT));
-    }
-
-
-    /**
-     * 1. 음식 기반 검색 (ex. 피자, 치킨, 칼국수 치킨)
-     * 2. 지역구 기반 검색 (ex. 강남구, 종로)
-     * 3. 음식 및 지역구 기반 검색 (ex. 강남구 피자, 치킨 종로구, 용산 고기)
-     *
-     * @param query
-     * @param pageable
-     */
-    public PageResponse<?> searchRestaurant(String query, Pageable pageable) {
-        List<String> parseResult = parseQuery(query); // 파싱된 결과 값
-        String district = parseResult.get(0);
-        String food = parseResult.get(1);
-
-        Page<RestaurantSearchResponse> restaurantSearchResponses;
-        // 만약 지역명이 없다면
-        if (!StringUtils.hasText(district)) {
-            restaurantSearchResponses = restaurantRepository.searchRestaurantByFood(food, pageable);
-        } else if (!StringUtils.hasText(food)) { // 지역명만 있을 경우
-            log.info("district = {}", district);
-            restaurantSearchResponses = restaurantRepository.searchRestaurantByDistrict(district, pageable);
-        } else {
-            restaurantSearchResponses = restaurantRepository.searchRestaurantByFoodAndDistrict(food, district, pageable);
-        }
-
-        return new PageResponse<>(restaurantSearchResponses.getTotalPages(),
-                restaurantSearchResponses.getContent());
-    }
-
-    /**
-     * 주소 코드 기반 식당 조회
-     * 조회 시 방문수 내림차순 정렬
-     *
-     * @param dongCode
-     * @param pageable
-     * @return
-     */
-    public PageResponse<?> getRestaurantByAddressCode(String dongCode, Pageable pageable) {
-        // 동 코드가 유효하지 않은 경우
-        if (addressService.isExistDongCode(dongCode)) {
-            throw new CustomException(DONG_NOT_FOUND_ERROR);
-        }
-
-        Page<RestaurantSearchResponse> pageResult = restaurantRepository.findByAddressCode(dongCode, pageable);
-        // 주소 코드 기반 식당 리스트가 비어있다면 404
-        if (pageResult.isEmpty()) {
-            throw new CustomException(NOT_FOUND_RESTAURANT);
-        }
-
-        int totalPages = pageResult.getTotalPages(); // 전체 페이지 수
-
-        return new PageResponse<>(totalPages, pageResult.getContent());
     }
 }
