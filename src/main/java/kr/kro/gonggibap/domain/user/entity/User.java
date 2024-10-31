@@ -53,6 +53,6 @@ public class User {
     }
 
     public void decreaseScore() {
-        if (this.score > 10) this.score -= 10;
+        if (this.score >= 10) this.score -= 10;
     }
 }
