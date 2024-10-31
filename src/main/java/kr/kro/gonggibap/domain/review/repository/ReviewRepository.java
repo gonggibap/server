@@ -25,9 +25,4 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     List<Review> findAllByUserId(Long userId);
 
-    @Query("select rv " +
-            "from Review rv " +
-            "join fetch Restaurant r " +
-            "where rv.restaurant.id in :restaurantIds")
-    List<Review> bulkByRestaurantId(@Param("restaurantIds") List<Long> restaurantIds);
 }

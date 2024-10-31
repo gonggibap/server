@@ -28,9 +28,4 @@ public interface HistoryRepository extends JpaRepository<History, Long> {
             "ORDER BY h.historyDate DESC")
     Page<HistoryResponse> findHistoryByRestaurantId(@Param("restaurantId") Long restaurantId, Pageable pageable);
 
-    @Query("select h " +
-            "from History h " +
-            "join fetch Restaurant r " +
-            "where h.restaurant.id in :restaurantIds")
-    List<History> bulkByRestaurantIds(@Param("restaurantIds") List<Long> restaurantIds);
 }
