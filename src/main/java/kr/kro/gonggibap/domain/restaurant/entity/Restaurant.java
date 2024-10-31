@@ -6,6 +6,7 @@ import kr.kro.gonggibap.domain.review.entity.Review;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.locationtech.jts.geom.Point;
 
 import java.math.BigDecimal;
@@ -15,6 +16,7 @@ import java.util.List;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@ToString(of = {"id", "restaurantName", "addressName", "latitude", "longitude"})
 public class Restaurant {
 
     @Id

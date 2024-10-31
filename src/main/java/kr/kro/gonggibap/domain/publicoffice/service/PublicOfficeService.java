@@ -6,7 +6,6 @@ import kr.kro.gonggibap.domain.publicoffice.dto.response.PublicOfficeRestaurantR
 import kr.kro.gonggibap.domain.publicoffice.entity.PublicOffice;
 import kr.kro.gonggibap.domain.publicoffice.repository.PublicOfficeRepository;
 import kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantResponse;
-import kr.kro.gonggibap.domain.restaurant.entity.Restaurant;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

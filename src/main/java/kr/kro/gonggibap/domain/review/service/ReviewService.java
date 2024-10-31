@@ -109,6 +109,4 @@ public class ReviewService {
 
         return getMyReviewResponses(user, myReviews);
     }
-
-
 }

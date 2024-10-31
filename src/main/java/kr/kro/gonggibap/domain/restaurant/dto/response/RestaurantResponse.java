@@ -1,5 +1,7 @@
 package kr.kro.gonggibap.domain.restaurant.dto.response;
 
+import kr.kro.gonggibap.domain.publicoffice.entity.PublicOffice;
+import kr.kro.gonggibap.domain.restaurant.entity.Restaurant;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
