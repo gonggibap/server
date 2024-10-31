@@ -33,12 +33,13 @@ public class RestaurantController implements RestaurantControllerSwagger{
      * @return RestaurantPageResponse response
      */
     @GetMapping()
-    public ResponseEntity<?> getRestaurants(@RequestParam List<BigDecimal> latitudes,
-                                            @RequestParam List<BigDecimal> longitudes,
+    public ResponseEntity<?> getRestaurants(@RequestParam(required = false) List<BigDecimal> latitudes,
+                                            @RequestParam(required = false) List<BigDecimal> longitudes,
                                             @RequestParam(required = false) String category,
+                                            @RequestParam(required = false) String search,
                                             @PageableDefault(page = 0, size = 30) Pageable pageable) {
 
-        PageResponse<?> response = restaurantService.getRestaurants(latitudes, longitudes, category, pageable);
+        PageResponse<?> response = restaurantService.getRestaurants(latitudes, longitudes, category, search, pageable);
         return ResponseEntity.ok(response);
     }
 
@@ -51,37 +52,6 @@ public class RestaurantController implements RestaurantControllerSwagger{
     public ResponseEntity<?> getRestaurant(@PathVariable Long id) {
         RestaurantResponse response = restaurantService.getRestaurant(id);
         return ResponseEntity.ok(success(response));
-    }
-
-
-    /**
-     * 주소 코드 기반 식당 조회
-     * 조회 시 방문수 내림차순 정렬
-     *
-     * @param dongCode
-     * @param pageable
-     * @return
-     */
-    @GetMapping("/by-dong")
-    public ResponseEntity<?> getRestaurantByAddressCode(@RequestParam String dongCode,
-                                                        @PageableDefault(page = 0, size = 30) Pageable pageable) {
-        PageResponse<?> response = restaurantService.getRestaurantByAddressCode(dongCode, pageable);
-        return ResponseEntity.ok(response);
-    }
-
-    /**
-     * 사용자의 검색어에 따른 음식점 검색
-     * 일치 여부(score)에 따른 내림차순 정렬
-     *
-     * @param query
-     * @param pageable
-     * @return RestaurantPageResponse response
-     */
-    @GetMapping("/search")
-    public ResponseEntity<?> searchRestaurant(@RequestParam String query,
-                                              @PageableDefault(page = 0, size = 10) Pageable pageable) {
-        PageResponse<?> response = restaurantService.searchRestaurant(query, pageable);
-        return ResponseEntity.ok(response);
     }
 
 }

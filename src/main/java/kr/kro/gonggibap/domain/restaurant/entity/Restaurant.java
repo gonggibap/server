@@ -59,10 +59,6 @@ public class Restaurant {
     @OneToMany(mappedBy = "restaurant", cascade = CascadeType.REMOVE)
     private List<History> histories;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "address_code", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
-    private Address address;
-
     @OneToMany(mappedBy = "restaurant", cascade = CascadeType.REMOVE)
     private List<Review> reviews;
 }
