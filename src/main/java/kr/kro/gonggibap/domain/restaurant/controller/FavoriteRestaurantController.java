@@ -1,6 +1,7 @@
 package kr.kro.gonggibap.domain.restaurant.controller;
 
 import kr.kro.gonggibap.core.annotation.LoginUser;
+import kr.kro.gonggibap.core.error.PageResponse;
 import kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantResponse;
 import kr.kro.gonggibap.domain.restaurant.service.FavoriteRestaurantService;
 import kr.kro.gonggibap.domain.user.entity.User;
@@ -37,7 +38,7 @@ public class FavoriteRestaurantController {
     @GetMapping("")
     public ResponseEntity<?> getFavoriteRestaurants(@LoginUser User user,
                                                     @PageableDefault(size = 20) Pageable pageable) {
-        List<RestaurantResponse> favoriteList = favoriteRestaurantService.getFavoriteList(user, pageable);
-        return ResponseEntity.ok(success(favoriteList));
+        PageResponse<?> response = favoriteRestaurantService.getFavoriteList(user, pageable);
+        return ResponseEntity.ok(success(response));
     }
 }
