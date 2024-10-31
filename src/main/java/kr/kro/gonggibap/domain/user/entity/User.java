@@ -18,6 +18,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@ToString(of = {"id", "email","userRole"})
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
