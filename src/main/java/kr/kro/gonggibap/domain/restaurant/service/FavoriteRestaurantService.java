@@ -1,5 +1,6 @@
 package kr.kro.gonggibap.domain.restaurant.service;
 
+import kr.kro.gonggibap.core.error.PageResponse;
 import kr.kro.gonggibap.domain.history.entity.History;
 import kr.kro.gonggibap.domain.history.service.HistoryService;
 import kr.kro.gonggibap.domain.publicoffice.dto.response.PublicOfficeResponse;
@@ -31,9 +32,6 @@ import java.util.stream.Collectors;
 public class FavoriteRestaurantService {
     private final FavoriteRestaurantRepository favoriteRestaurantRepository;
     private final RestaurantService restaurantService;
-    private final UserService userService;
-    private final ReviewService reviewService;
-    private final HistoryService historyService;
 
     @Transactional
     public void doFavoriteRestaurant(User user, Long restaurantId) {
@@ -50,33 +48,9 @@ public class FavoriteRestaurantService {
         favoriteRestaurantRepository.deleteFavoriteRestaurant(user, restaurantId);
     }
 
-    public List<RestaurantResponse> getFavoriteList(final User user, final Pageable pageable) {
-        Page<FavoriteRestaurant> favorites = favoriteRestaurantRepository.findByUser(user, pageable);
-
-        // Restaurant IDs 수집
-        List<Long> restaurantIds = favorites.stream()
-                .map(favorite -> favorite.getRestaurant().getId())
-                .toList();
-
-        // 2단계: 추가로 필요한 History와 Review 데이터 로드
-        List<History> histories = historyService.bulkByRestaurantIds(restaurantIds);
-        List<Review> reviews = reviewService.bulkByRestaurantIds(restaurantIds);
-
-        // History와 Review를 Restaurant ID 기준으로 매핑
-        Map<Long, List<History>> historyMap = histories.stream()
-                .collect(Collectors.groupingBy(history -> history.getRestaurant().getId()));
-
-        Map<Long, Double> pointAvgMap = reviews.stream()
-                .collect(Collectors.groupingBy(review -> review.getRestaurant().getId(),
-                        Collectors.averagingDouble(Review::getPoint)));
-
-        // 3단계: 결과 매핑
-        return favorites.map(favorite -> {
-            Restaurant restaurant = favorite.getRestaurant();
-
-            Long visitCount = historyMap.getOrDefault(restaurant.getId(), Collections.emptyList()).size();
-            Double pointAvg = pointAvgMap.getOrDefault(restaurant.getId(), 0.0);
-
-
-        }
+    public PageResponse<?> getFavoriteList(final User user, final Pageable pageable) {
+        Page<RestaurantResponse> favorites = favoriteRestaurantRepository.findByUser(user.getId(), pageable);
+        return new PageResponse<>(favorites.getTotalPages(), favorites.getContent());
     }
+}
+
