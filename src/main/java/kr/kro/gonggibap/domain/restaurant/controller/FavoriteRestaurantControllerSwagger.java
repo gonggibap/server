@@ -31,8 +31,8 @@ public interface FavoriteRestaurantControllerSwagger {
                     content = @Content(mediaType = "application/json")
             )
     })
-    @PostMapping("/{id}")
-    ResponseEntity<?> doFavorite(@LoginUser User user, @PathVariable Long id);
+    @PostMapping("/{restaurantId}")
+    ResponseEntity<?> doFavorite(@LoginUser User user, @PathVariable Long restaurantId);
 
     @Operation(
             summary = "식당 좋아요 취소", description = "로그인 된 사용자가 특정 식당을 좋아요를 취소함")
@@ -48,8 +48,8 @@ public interface FavoriteRestaurantControllerSwagger {
                     content = @Content(mediaType = "application/json")
             )
     })
-    @DeleteMapping("/{id}")
-    ResponseEntity<?> unFavorite(@LoginUser User user, @PathVariable Long id);
+    @DeleteMapping("/{restaurantId}")
+    ResponseEntity<?> unFavorite(@LoginUser User user, @PathVariable Long restaurantId);
 
     @Operation(
             summary = "식당 좋아요 리스트 조회", description = "로그인 된 사용자가 좋아요한 식당 목록을 조회함")

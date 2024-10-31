@@ -16,23 +16,23 @@ import java.util.List;
 import static kr.kro.gonggibap.core.error.CommonResponse.success;
 
 @RestController
-@RequestMapping("/api/restaurant/favorite")
+@RequestMapping("/api/restaurants/favorite")
 @RequiredArgsConstructor
-public class FavoriteRestaurantController {
+public class FavoriteRestaurantController implements FavoriteRestaurantControllerSwagger{
     private final FavoriteRestaurantService favoriteRestaurantService;
 
-    @PostMapping("/{id}")
+    @PostMapping("/{restaurantId}")
     public ResponseEntity<?> doFavorite(@LoginUser User user,
-                                        @PathVariable Long id) {
-        favoriteRestaurantService.doFavoriteRestaurant(user, id);
+                                        @PathVariable Long restaurantId) {
+        favoriteRestaurantService.doFavoriteRestaurant(user, restaurantId);
         return ResponseEntity.ok()
                 .build();
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{restaurantId}")
     public ResponseEntity<?> unFavorite(@LoginUser User user,
-                                        @PathVariable Long id) {
-        favoriteRestaurantService.unFavoriteRestaurant(user, id);
+                                        @PathVariable Long restaurantId) {
+        favoriteRestaurantService.unFavoriteRestaurant(user, restaurantId);
         return ResponseEntity.ok()
                 .build();
     }
