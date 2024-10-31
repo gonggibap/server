@@ -20,6 +20,9 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString(of = {"id", "email","userRole"})
 public class User {
+
+    private static final Long POINT = 10L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
@@ -30,6 +33,9 @@ public class User {
 
     @Column(name = "name", nullable = false)
     private String name;
+
+    @Column(name = "score", nullable = false)
+    private Long score = 0L;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "user_role")
@@ -43,5 +49,13 @@ public class User {
 
     public void update(String name) {
         this.name = name;
+    }
+
+    public void increaseScore() {
+        this.score += POINT;
+    }
+
+    public void decreaseScore() {
+        if (this.score >= POINT) this.score -= POINT;
     }
 }

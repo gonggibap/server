@@ -28,7 +28,7 @@ public class ReviewController implements ReviewControllerSwagger{
 
     /**
      * 특정 식당 리뷰 전체 조회
-     * @param restaurantId
+     * @param id
      * @return
      */
     @GetMapping("/restaurant/{id}")
@@ -56,7 +56,7 @@ public class ReviewController implements ReviewControllerSwagger{
     /**
      * 리뷰 삭제
      * @param user
-     * @param reviewId
+     * @param id
      * @return
      */
     @DeleteMapping("/{id}")
