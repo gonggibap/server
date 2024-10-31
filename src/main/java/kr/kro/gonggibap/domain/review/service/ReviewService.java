@@ -109,9 +109,4 @@ public class ReviewService {
 
         return getMyReviewResponses(user, myReviews);
     }
-
-    public List<Review> bulkByRestaurantIds(List<Long> restaurantIds) {
-        return reviewRepository.
-    }
-
 }

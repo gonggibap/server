@@ -47,8 +47,4 @@ public class HistoryService {
                 histories.getContent());
     }
 
-    public List<History> bulkByRestaurantIds(List<Long> restaurantIds) {
-        return historyRepository.bulkByRestaurantIds(restaurantIds);
-    }
-
 }
