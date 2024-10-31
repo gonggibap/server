@@ -53,7 +53,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         if(authorzationHeader != null && authorzationHeader.startsWith(TOKEN_PREFIX)) {
             return authorzationHeader.substring(TOKEN_PREFIX.length());
         }
-        throw new CustomException(ErrorCode.NOT_VALID_TOKEN);
+        return null;
     }
 }
 
