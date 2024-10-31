@@ -14,7 +14,7 @@ import java.util.List;
 public class Address {
 
     @Id
-    @Column(name = "address_code")
+    @Column(name = "code")
     private String code;
 
     @Column(name = "sido_name")
@@ -25,7 +25,4 @@ public class Address {
 
     @Column(name = "dong_name")
     private String dongName;
-
-    @OneToMany(mappedBy = "address", cascade = CascadeType.REMOVE)
-    private List<Restaurant> restaurants;
 }
