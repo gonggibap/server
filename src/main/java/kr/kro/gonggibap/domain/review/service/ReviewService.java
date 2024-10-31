@@ -65,6 +65,9 @@ public class ReviewService {
             imageService.createImages(savedReview, imageUrls);
         }
 
+        // 사용자 리뷰 점수 증가
+        user.increaseScore();
+
         return savedReview.getId();
     }
 
@@ -100,6 +103,10 @@ public class ReviewService {
         images.forEach(image -> imageS3UploadService.deleteReviewFile(image.getImageUrl()));
 
         reviewRepository.deleteById(reviewId);
+
+        // 사용자 리뷰 점수 감소
+        user.decreaseScore();
+
     }
 
     public List<ReviewResponse> getMyReviews(User user) {

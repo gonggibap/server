@@ -31,6 +31,9 @@ public class User {
     @Column(name = "name", nullable = false)
     private String name;
 
+    @Column(name = "score", nullable = false)
+    private Long score = 0L;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "user_role")
     private UserRole userRole;
@@ -43,5 +46,13 @@ public class User {
 
     public void update(String name) {
         this.name = name;
+    }
+
+    public void increaseScore() {
+        this.score += 10;
+    }
+
+    public void decreaseScore() {
+        if (this.score > 10) this.score -= 10;
     }
 }
