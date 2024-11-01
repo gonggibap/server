@@ -13,6 +13,8 @@ public class ReviewResponse {
     private final Long reviewId;
     private final Long userId;
     private final String userName;
+    private final Long userReviewCount;
+    private final Double userReviewAvg;
     private final Double point;
     private final String content;
     private final LocalDate date;

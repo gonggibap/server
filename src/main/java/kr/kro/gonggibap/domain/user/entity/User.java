@@ -58,4 +58,16 @@ public class User {
     public void decreaseScore() {
         if (this.score >= POINT) this.score -= POINT;
     }
+
+
+    public Long getReviewsCount() {
+        return (long) this.reviews.size();
+    }
+
+    public Double getReviewsAverage() {
+        return this.reviews.stream()
+                .mapToDouble(Review::getPoint)
+                .average()
+                .orElse(0.0);
+    }
 }
