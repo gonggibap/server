@@ -107,4 +107,13 @@ public class RestaurantService {
 
 
     }
+
+    /**
+     * restaurantId를 기반으로 해당 아이디를 가진 엔티티가 존재하는지 확인하는 메소드
+     * @param restaurantId
+     * @return
+     */
+    public boolean existsById(Long restaurantId) {
+        return restaurantRepository.existsById(restaurantId);
+    }
 }
