@@ -13,6 +13,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     @Query("SELECT r " +
             "FROM Review r " +
             "LEFT JOIN FETCH r.images " +
+            "JOIN FETCH r.user " +
             "WHERE r.restaurant.id = :restaurantId " +
             "ORDER BY r.lastModifiedDate DESC")
     List<Review> findAllByRestaurantIdWithImages(Long restaurantId);

@@ -15,6 +15,8 @@ public class ReviewConverter {
                 .map(myReview -> new ReviewResponse(myReview.getId(),
                         user.getId(),
                         user.getName(),
+                        user.getReviewsCount(),
+                        user.getReviewsAverage(),
                         myReview.getPoint(),
                         myReview.getContent(),
                         myReview.getLastModifiedDate(),
@@ -29,6 +31,8 @@ public class ReviewConverter {
                         review.getId(),
                         review.getUser().getId(),
                         review.getUser().getName(),
+                        review.getUser().getReviewsCount(),  // 리뷰 개수
+                        review.getUser().getReviewsAverage(),  // 리뷰 평균
                         review.getPoint(),
                         review.getContent(),
                         review.getLastModifiedDate(),
