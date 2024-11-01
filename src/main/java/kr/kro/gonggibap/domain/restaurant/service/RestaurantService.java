@@ -107,4 +107,8 @@ public class RestaurantService {
 
 
     }
+
+    public boolean existsById(Long restaurantId) {
+        return restaurantRepository.existsById(restaurantId);
+    }
 }
