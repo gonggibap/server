@@ -12,10 +12,13 @@ import java.util.Optional;
 
 public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {
 
-    @Query(value = "SELECT new kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantResponse(r.id, r.restaurantName, r.phone, r.link, r.category, r.detailCategory, r.addressName, r.roadAddressName, r.latitude, r.longitude, h.publicOffice.id, p.name, COUNT(distinct h), AVG(rev.point)) " +
+    @Query(value = "SELECT new kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantResponse(" +
+            "r.id, r.restaurantName, r.phone, r.link, r.category, r.detailCategory, r.addressName, r.roadAddressName, " +
+            "r.latitude, r.longitude, h.publicOffice.id, p.name, " +
+            "CAST((SELECT COUNT(DISTINCT h2) FROM History h2 WHERE h2.restaurant.id = r.id) AS long), " +
+            "CAST((SELECT AVG(rev.point) FROM Review rev WHERE rev.restaurant.id = r.id) AS double)) " +
             "FROM Restaurant r " +
             "LEFT JOIN r.histories h " +
-            "LEFT JOIN r.reviews rev " +
             "LEFT JOIN h.publicOffice p " +
             "WHERE FUNCTION('ST_Contains', FUNCTION('ST_GeomFromText', :polygon, 4326), r.location) = true " +
             "AND (:category IS NULL OR r.detailCategory = :category) " +
@@ -24,7 +27,11 @@ public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {
     Page<RestaurantResponse> getRestaurants(String polygon, String category, Pageable pageable);
 
 
-    @Query(value = "SELECT new kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantResponse(r.id, r.restaurantName, r.phone, r.link, r.category, r.detailCategory, r.addressName, r.roadAddressName, r.latitude, r.longitude, h.publicOffice.id, p.name, COUNT(distinct h), AVG(rev.point)) " +
+    @Query(value = "SELECT new kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantResponse(" +
+            "r.id, r.restaurantName, r.phone, r.link, r.category, r.detailCategory, r.addressName, r.roadAddressName, " +
+            "r.latitude, r.longitude, h.publicOffice.id, p.name, " +
+            "CAST((SELECT COUNT(DISTINCT h2) FROM History h2 WHERE h2.restaurant.id = r.id) AS long), " +
+            "CAST((SELECT AVG(rev.point) FROM Review rev WHERE rev.restaurant.id = r.id) AS double)) " +
             "FROM Restaurant r " +
             "LEFT JOIN r.histories h " +
             "LEFT JOIN r.reviews rev " +
@@ -37,7 +44,11 @@ public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {
     /**
      * N-gram 기반 fulltext index를 restaurants food기반으로 검색
      */
-    @Query(value = "SELECT new kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantResponse(r.id, r.restaurantName, r.phone, r.link, r.category, r.detailCategory, r.addressName, r.roadAddressName, r.latitude, r.longitude, h.publicOffice.id, p.name, COUNT(distinct h), AVG(rev.point)) " +
+    @Query(value = "SELECT new kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantResponse(" +
+            "r.id, r.restaurantName, r.phone, r.link, r.category, r.detailCategory, r.addressName, r.roadAddressName, " +
+            "r.latitude, r.longitude, h.publicOffice.id, p.name, " +
+            "CAST((SELECT COUNT(DISTINCT h2) FROM History h2 WHERE h2.restaurant.id = r.id) AS long), " +
+            "CAST((SELECT AVG(rev.point) FROM Review rev WHERE rev.restaurant.id = r.id) AS double)) " +
             "FROM Restaurant r " +
             "LEFT JOIN r.histories h " +
             "LEFT JOIN r.reviews rev " +
@@ -50,7 +61,11 @@ public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {
     /**
      * N-gram 기반 fulltext index를 restaurants 구 기준으로 검색
      */
-    @Query(value = "SELECT new kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantResponse(r.id, r.restaurantName, r.phone, r.link, r.category, r.detailCategory, r.addressName, r.roadAddressName, r.latitude, r.longitude, h.publicOffice.id, p.name, COUNT(distinct h), AVG(rev.point)) " +
+    @Query(value = "SELECT new kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantResponse(" +
+            "r.id, r.restaurantName, r.phone, r.link, r.category, r.detailCategory, r.addressName, r.roadAddressName, " +
+            "r.latitude, r.longitude, h.publicOffice.id, p.name, " +
+            "CAST((SELECT COUNT(DISTINCT h2) FROM History h2 WHERE h2.restaurant.id = r.id) AS long), " +
+            "CAST((SELECT AVG(rev.point) FROM Review rev WHERE rev.restaurant.id = r.id) AS double)) " +
             "FROM Restaurant r " +
             "LEFT JOIN r.histories h " +
             "LEFT JOIN r.reviews rev " +
@@ -63,7 +78,11 @@ public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {
     /**
      * N-gram 기반 fulltext index를 restaurants food, 구 기준으로 검색
      */
-    @Query(value = "SELECT new kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantResponse(r.id, r.restaurantName, r.phone, r.link, r.category, r.detailCategory, r.addressName, r.roadAddressName, r.latitude, r.longitude, h.publicOffice.id, p.name, COUNT(distinct h), AVG(rev.point)) " +
+    @Query(value = "SELECT new kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantResponse(" +
+            "r.id, r.restaurantName, r.phone, r.link, r.category, r.detailCategory, r.addressName, r.roadAddressName, " +
+            "r.latitude, r.longitude, h.publicOffice.id, p.name, " +
+            "CAST((SELECT COUNT(DISTINCT h2) FROM History h2 WHERE h2.restaurant.id = r.id) AS long), " +
+            "CAST((SELECT AVG(rev.point) FROM Review rev WHERE rev.restaurant.id = r.id) AS double)) " +
             "FROM Restaurant r " +
             "LEFT JOIN r.histories h " +
             "LEFT JOIN r.reviews rev " +
