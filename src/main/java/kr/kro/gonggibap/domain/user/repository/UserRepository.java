@@ -1,14 +1,19 @@
 package kr.kro.gonggibap.domain.user.repository;
 
 import kr.kro.gonggibap.domain.user.entity.User;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
 
-public interface UserRepository extends JpaRepository<User,Long> {
+public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("SELECT u FROM User u WHERE u.email = :email")
-    Optional<User> findByEmail(@Param("email")String email);
+    Optional<User> findByEmail(@Param("email") String email);
+
+    @EntityGraph(attributePaths = {"reviews", "favorites", "reviews.restaurant", "favorites.restaurant"})
+    Optional<User> getUserInfo(User user);
+
 }
