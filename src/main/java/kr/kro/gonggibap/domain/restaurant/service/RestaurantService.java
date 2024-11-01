@@ -4,10 +4,12 @@ import kr.kro.gonggibap.core.error.PageResponse;
 import kr.kro.gonggibap.core.exception.CustomException;
 import kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantResponse;
 import kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantSearchResponse;
+import kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantWithImageResponse;
 import kr.kro.gonggibap.domain.restaurant.entity.Restaurant;
 import kr.kro.gonggibap.domain.restaurant.repository.RestaurantRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -30,6 +32,9 @@ public class RestaurantService {
 
     private final RestaurantRepository restaurantRepository;
     private final AddressService addressService;
+
+    @Value("${cloud.aws.base-url}")
+    private String baseUrl;
 
     /**
      * 식당 ID 기반 식당 조회
@@ -96,8 +101,10 @@ public class RestaurantService {
                 restaurantResponses.getContent());
     }
 
-    public RestaurantResponse getRestaurant(Long id) {
-        return restaurantRepository.getRestaurantById(id)
+    public RestaurantWithImageResponse getRestaurant(Long id) {
+        return  restaurantRepository.getRestaurantById(id, baseUrl)
                 .orElseThrow(() -> new CustomException(NOT_FOUND_RESTAURANT));
+
+
     }
 }

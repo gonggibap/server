@@ -2,6 +2,7 @@ package kr.kro.gonggibap.domain.restaurant.controller;
 
 import kr.kro.gonggibap.core.error.PageResponse;
 import kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantResponse;
+import kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantWithImageResponse;
 import kr.kro.gonggibap.domain.restaurant.service.RestaurantService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -50,7 +51,7 @@ public class RestaurantController implements RestaurantControllerSwagger{
      */
     @GetMapping("/{id}")
     public ResponseEntity<?> getRestaurant(@PathVariable Long id) {
-        RestaurantResponse response = restaurantService.getRestaurant(id);
+        RestaurantWithImageResponse response = restaurantService.getRestaurant(id);
         return ResponseEntity.ok(success(response));
     }
 
