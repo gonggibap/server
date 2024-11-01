@@ -68,4 +68,27 @@ public interface FavoriteRestaurantControllerSwagger {
     @GetMapping("")
     ResponseEntity<?> getFavoriteRestaurants(@LoginUser User user,
                                              @PageableDefault(size = 20) Pageable pageable);
+
+    @Operation(
+            summary = "식당 좋아요 상태 조회", description = "로그인 된 사용자가 특정 식당의 좋아요 상태를 조회함")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "상태 조회",
+                    content = @Content(mediaType = "application/json")
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "토큰이 유효하지 않을 시 예외 발생",
+                    content = @Content(mediaType = "application/json")
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "존재하지 않는 식당 ID 조회 시 예외 발생",
+                    content = @Content(mediaType = "application/json")
+            )
+    })
+    @GetMapping("/{restaurantId}/check")
+    ResponseEntity<?> isFavoriteRestaurant(@LoginUser User user,
+                                           @PathVariable Long restaurantId);
 }
