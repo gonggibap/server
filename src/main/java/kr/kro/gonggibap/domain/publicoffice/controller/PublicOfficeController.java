@@ -20,6 +20,12 @@ public class PublicOfficeController implements PublicOfficeControllerSwagger{
 
     private final PublicOfficeService publicOfficeService;
 
+    /**
+     * ID 값으로 공공기관 정보를 조회
+     *
+     * @param id
+     * @return
+     */
     @GetMapping("/{id}")
     public ResponseEntity<?> getPublicOffice(@PathVariable Long id) {
         PublicOfficeRestaurantResponse publicOffice = publicOfficeService.getPublicOffice(id);
@@ -27,6 +33,10 @@ public class PublicOfficeController implements PublicOfficeControllerSwagger{
         return ResponseEntity.ok(success(publicOffice));
     }
 
+    /**
+     * 공공기관의 전체 정보를 담은 리스트 조회
+     * @return
+     */
     @GetMapping("")
     public ResponseEntity<?> getPublicOffices() {
         List<PublicOfficeResponse> publicOffices = publicOfficeService.getPublicOffices();
