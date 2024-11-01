@@ -26,14 +26,5 @@ public interface UserControllerSwagger {
     @GetMapping("/")
     ResponseEntity<?> getUserInfo(@Parameter(hidden = true) @LoginUser User user);
 
-    @Operation(
-            summary = "특정 회원 조회", description = "로그인한 사용자가 다른 사용자의 기본 정보를 조회. (마이페이지를 고려하여 구현, 현재는 disabled 상태)",
-            security = {@SecurityRequirement(name = "bearerAuth")})
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(mediaType = "application/json")),
-            @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(mediaType = "application/json"))
-    })
-    @GetMapping("/{id}")
-    ResponseEntity<?> getUserProfile(@LoginUser User user, @PathVariable Long id);
 }
 
