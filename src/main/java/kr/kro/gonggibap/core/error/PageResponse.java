@@ -1,4 +1,5 @@
-package kr.kro.gonggibap.domain.restaurant.dto.response;
+package kr.kro.gonggibap.core.error;
+
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -6,10 +7,10 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-@Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class RestaurantPageResponse {
+@Getter
+public class PageResponse<T> {
     private Integer totalPages;
-    private List<RestaurantResponse> restaurantResponses;
+    private List<T> content;
 }

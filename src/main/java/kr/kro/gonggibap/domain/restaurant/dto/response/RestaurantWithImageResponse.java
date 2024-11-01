@@ -1,6 +1,5 @@
 package kr.kro.gonggibap.domain.restaurant.dto.response;
 
-import kr.kro.gonggibap.domain.publicoffice.entity.PublicOffice;
 import kr.kro.gonggibap.domain.restaurant.entity.Restaurant;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,7 +10,7 @@ import java.math.BigDecimal;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class RestaurantResponse {
+public class RestaurantWithImageResponse {
     private Long restaurantId;
     private String restaurantName;
     private String phone;
@@ -22,6 +21,7 @@ public class RestaurantResponse {
     private String restaurantRoadAddressName;
     private BigDecimal restaurantLatitude;
     private BigDecimal restaurantLongitude;
+    private String restaurantImage;
     private Long publicOfficeId;
     private String publicOfficeName;
     private Long visitCount;

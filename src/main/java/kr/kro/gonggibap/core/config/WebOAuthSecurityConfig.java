@@ -5,6 +5,7 @@ import kr.kro.gonggibap.core.config.oauth.OAuth2AuthorizationRequestBasedOnCooki
 import kr.kro.gonggibap.core.config.oauth.OAuth2SuccessHandler;
 import kr.kro.gonggibap.core.config.oauth.OAuth2UserCustomService;
 import kr.kro.gonggibap.core.filter.TokenAuthenticationFilter;
+import kr.kro.gonggibap.core.filter.TokenExceptionFilter;
 import kr.kro.gonggibap.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +35,7 @@ public class WebOAuthSecurityConfig {
     private final OAuth2UserCustomService oAuth2UserCustomService;
     private final TokenProvider tokenProvider;
     private final UserService userService;
+    private final TokenExceptionFilter tokenExceptionFilter;
 
     @Value("${auth.redirect-path}")
     private String redirectPath;
@@ -42,7 +44,8 @@ public class WebOAuthSecurityConfig {
     @Bean
     public WebSecurityCustomizer configure() {
         return (web) -> web.ignoring()
-                .requestMatchers("/img/**", "/css/**", "/js/**");
+                .requestMatchers("/img/**", "/css/**", "/js/**", "/v3/api-docs/**", "/swagger-ui/**",
+                        "/swagger-ui.html", "/swagger-resources/**", "/webjars/**");
 
     }
 
@@ -58,7 +61,7 @@ public class WebOAuthSecurityConfig {
                 .oauth2Login(AbstractHttpConfigurer::disable)
                 // 헤더를 확인할 커스텀 필터 추가
                 .addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
-
+                .addFilterBefore(tokenExceptionFilter, TokenAuthenticationFilter.class)
                 .authorizeRequests(auth -> auth
                                 // 토큰 재발급 url은 인증없이 접근 가능하도록 설정 permitAll()? denyAll()?
 //                        .requestMatchers(new AntPathRequestMatcher("/api/**")).permitAll()

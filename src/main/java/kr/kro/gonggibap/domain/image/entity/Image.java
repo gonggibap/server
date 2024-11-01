@@ -18,7 +18,7 @@ public class Image {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "review_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    @JoinColumn(name = "review_id", nullable = false)
     private Review review;
 
     private String imageUrl;
