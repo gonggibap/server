@@ -14,6 +14,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -36,10 +37,10 @@ public class Review {
     private Double point;
 
     @CreatedDate
-    private LocalDate createdDate;
+    private LocalDateTime createdDate;
 
     @LastModifiedDate
-    private LocalDate lastModifiedDate;
+    private LocalDateTime lastModifiedDate;
 
     @OneToMany(mappedBy = "review", cascade = CascadeType.REMOVE)
     private List<Image> images;
