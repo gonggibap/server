@@ -8,6 +8,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class FavoriteStatusResponse {
-    private boolean favorite;
+    private boolean favoriteStatus;
     private Long restaurantId;
 }
