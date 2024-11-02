@@ -2,15 +2,13 @@ package kr.kro.gonggibap.domain.restaurant.entity;
 
 import jakarta.persistence.*;
 import kr.kro.gonggibap.domain.user.entity.User;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "favorite_restaurants")
+@ToString(of = {"id"})
 public class FavoriteRestaurant {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
