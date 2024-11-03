@@ -56,6 +56,9 @@ public enum ErrorCode {
     DUPLICATED_FAVORITE_RESTAURANT(HttpStatus.CONFLICT, HttpStatus.CONFLICT.value(), "이미 좋아요 된 식당입니다"),
     NOT_FOUND_FAVORITE_RESTAURANT(HttpStatus.NOT_FOUND, HttpStatus.NOT_FOUND.value(), "좋아요에 등록되지 않아 취소할 수 없습니다."),
 
+    // Short URL
+    NOT_FOUND_SHORT_URL(HttpStatus.NOT_FOUND, HttpStatus.NOT_FOUND.value(), "찾을 수 없는 단축 URL 입니다."),
+
     ;
 
     private final HttpStatus status;
