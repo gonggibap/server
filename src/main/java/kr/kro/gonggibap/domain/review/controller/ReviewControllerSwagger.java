@@ -11,7 +11,7 @@ import jakarta.validation.Valid;
 import kr.kro.gonggibap.core.annotation.LoginUser;
 import kr.kro.gonggibap.domain.review.dto.request.ReviewCreateRequest;
 import kr.kro.gonggibap.domain.user.entity.User;
-import org.springframework.http.MediaType;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -74,7 +74,7 @@ public interface ReviewControllerSwagger {
             @ApiResponse(responseCode = "401", description = "로그인이 필요합니다.", content = @Content(mediaType = "application/json"))
     })
     @GetMapping("/my")
-    ResponseEntity<?> getMyReviews(@LoginUser User user);
+    ResponseEntity<?> getMyReviews(@LoginUser User user, Pageable pageable);
     
     
 }
