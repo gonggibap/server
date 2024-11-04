@@ -1,7 +1,6 @@
 package kr.kro.gonggibap.domain.restaurant.service;
 
 import kr.kro.gonggibap.core.error.ErrorCode;
-import kr.kro.gonggibap.core.error.PageResponse;
 import kr.kro.gonggibap.core.exception.CustomException;
 import kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantResponse;
 import kr.kro.gonggibap.domain.restaurant.entity.FavoriteRestaurant;
@@ -15,6 +14,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 
 @Slf4j
 @Service
@@ -27,6 +28,7 @@ public class FavoriteRestaurantService {
     /**
      * 로그인 한 사용자가 식당 ID를 통해 좋아요 로직을 수행함
      * 만약 이미 좋아요한 식당인 경우 409 Conflict 발생
+     *
      * @param user
      * @param restaurantId
      */
@@ -50,6 +52,7 @@ public class FavoriteRestaurantService {
     /**
      * 로그인 한 사용자가 특정 식당의 좋아요를 취소하는 메소드
      * 만약, 기존에 좋아요를 하지 않은 경우에는 404 에러 발생
+     *
      * @param user
      * @param restaurantId
      */
@@ -63,18 +66,32 @@ public class FavoriteRestaurantService {
 
     /**
      * 로그인 한 사용자가 좋아요한 식당 목록을 조회하는 메소드
+     * 페이징 처리가 되어, count 쿼리가 한번 더 나감
      *
      * @param user
      * @param pageable
      * @return
      */
-    public PageResponse<?> getFavoriteList(final User user, final Pageable pageable) {
-        Page<RestaurantResponse> favorites = favoriteRestaurantRepository.findByUser(user.getId(), pageable);
-        return new PageResponse<>(favorites.getTotalPages(), favorites.getContent());
+    public Page<RestaurantResponse> getFavoritePagingList(final User user, final Pageable pageable) {
+        return favoriteRestaurantRepository.findByPagingUser(user.getId(), pageable);
+    }
+
+    /**
+     * 로그인 한 사용자가 좋아요한 식당 목록을 조회하는 메소드
+     * 페이징 처리가 되지 않아, count 쿼리가 나가지 않음
+     * 따라서 전체 페이지 수는 조회할 수 없음
+     *
+     * @param user
+     * @param pageable
+     * @return
+     */
+    public List<RestaurantResponse> getFavoriteSlicingList(final User user, final Pageable pageable) {
+        return favoriteRestaurantRepository.findBySlicingUser(user.getId(), pageable).getContent();
     }
 
     /**
      * 특정 식당에 사용자가 좋아요를 눌렀는 지를 확인하는 메소드
+     *
      * @param user
      * @param restaurantId
      * @return
