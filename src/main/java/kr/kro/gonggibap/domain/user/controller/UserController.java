@@ -1,22 +1,15 @@
 package kr.kro.gonggibap.domain.user.controller;
 
 import kr.kro.gonggibap.core.annotation.LoginUser;
-import kr.kro.gonggibap.core.error.ErrorCode;
-import kr.kro.gonggibap.core.exception.CustomException;
-import kr.kro.gonggibap.domain.review.dto.response.ReviewResponse;
-import kr.kro.gonggibap.domain.review.service.ReviewService;
-import kr.kro.gonggibap.domain.user.dto.UserDto;
+import kr.kro.gonggibap.domain.user.dto.UserMyPageDto;
 import kr.kro.gonggibap.domain.user.entity.User;
 import kr.kro.gonggibap.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 @Slf4j
 @RestController
@@ -24,7 +17,6 @@ import java.util.List;
 @RequestMapping("/api/users")
 public class UserController implements UserControllerSwagger{
     private final UserService userService;
-    private final ReviewService reviewService;
 
     /**
      * 사용자의 정보를 반환하는 API
@@ -34,9 +26,8 @@ public class UserController implements UserControllerSwagger{
      */
     @GetMapping("")
     public ResponseEntity<?> getUserInfo(@LoginUser User user) {
-        userService.getUserInfo(user);
-        UserDto userDto = UserDto.of(user);
-        return ResponseEntity.ok(userDto);
+        UserMyPageDto userMyPageDto = userService.getUserInfo(user);
+        return ResponseEntity.ok(userMyPageDto);
     }
 
 }
