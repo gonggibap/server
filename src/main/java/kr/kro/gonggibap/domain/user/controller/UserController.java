@@ -1,16 +1,13 @@
 package kr.kro.gonggibap.domain.user.controller;
 
 import kr.kro.gonggibap.core.annotation.LoginUser;
-import kr.kro.gonggibap.core.error.ErrorCode;
-import kr.kro.gonggibap.core.exception.CustomException;
-import kr.kro.gonggibap.domain.user.dto.UserDto;
+import kr.kro.gonggibap.domain.user.dto.UserMyPageDto;
 import kr.kro.gonggibap.domain.user.entity.User;
 import kr.kro.gonggibap.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -29,21 +26,8 @@ public class UserController implements UserControllerSwagger{
      */
     @GetMapping("")
     public ResponseEntity<?> getUserInfo(@LoginUser User user) {
-        if (user == null) {
-            throw new CustomException(ErrorCode.USER_NOT_EXISTS);
-        }
-        UserDto userDto = UserDto.of(user);
-        return ResponseEntity.ok(userDto);
+        UserMyPageDto userMyPageDto = userService.getUserInfo(user);
+        return ResponseEntity.ok(userMyPageDto);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<?> getUserProfile(@LoginUser User user, @PathVariable Long id) {
-        if (user == null || user.getId() != id) {
-            throw new CustomException(ErrorCode.NOT_AUTHORIZATION);
-        }
-
-        UserDto userDto = userService.findById(id);
-
-        return ResponseEntity.ok(userDto);
-    }
 }

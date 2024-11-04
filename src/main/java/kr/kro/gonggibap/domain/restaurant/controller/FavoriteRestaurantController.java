@@ -7,12 +7,11 @@ import kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantResponse;
 import kr.kro.gonggibap.domain.restaurant.service.FavoriteRestaurantService;
 import kr.kro.gonggibap.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 import static kr.kro.gonggibap.core.error.CommonResponse.success;
 
@@ -65,7 +64,8 @@ public class FavoriteRestaurantController implements FavoriteRestaurantControlle
     @GetMapping("")
     public ResponseEntity<?> getFavoriteRestaurants(@LoginUser User user,
                                                     @PageableDefault(size = 20) Pageable pageable) {
-        PageResponse<?> response = favoriteRestaurantService.getFavoriteList(user, pageable);
+        Page<RestaurantResponse> content = favoriteRestaurantService.getFavoritePagingList(user, pageable);
+        PageResponse<RestaurantResponse> response = new PageResponse<>(content.getTotalPages(), content.getContent());
         return ResponseEntity.ok(success(response));
     }
 

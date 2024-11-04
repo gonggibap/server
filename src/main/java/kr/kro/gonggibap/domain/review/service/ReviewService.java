@@ -14,6 +14,7 @@ import kr.kro.gonggibap.domain.review.repository.ReviewRepository;
 import kr.kro.gonggibap.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -106,14 +107,18 @@ public class ReviewService {
 
         // 사용자 리뷰 점수 감소
         user.decreaseScore();
-
     }
 
-    public List<ReviewResponse> getMyReviews(User user) {
-        Long userId = user.getId();
-
-        List<Review> myReviews = reviewRepository.findAllByUserId(userId);
-
-        return getMyReviewResponses(user, myReviews);
+    /**
+     * 사용자가 작성한 리뷰를 조회하는 메소드
+     * 페이징 처리가 가능하다
+     *
+     * @param user
+     * @param pageable
+     * @return
+     */
+    public List<ReviewResponse> getMyPagingReviews(User user, Pageable pageable) {
+        List<Review> reviews = reviewRepository.findPageByUserIdWithImages(user.getId(), pageable);
+        return getMyReviewResponses(user, reviews);
     }
 }

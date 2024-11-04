@@ -9,6 +9,7 @@ import kr.kro.gonggibap.domain.review.service.ReviewService;
 import kr.kro.gonggibap.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -69,8 +70,8 @@ public class ReviewController implements ReviewControllerSwagger{
     }
 
     @GetMapping("/my")
-    public ResponseEntity<?> getMyReviews(@LoginUser User user) {
-        List<ReviewResponse> myReviews = reviewService.getMyReviews(user);
+    public ResponseEntity<?> getMyReviews(@LoginUser User user, Pageable pageable) {
+        List<ReviewResponse> myReviews = reviewService.getMyPagingReviews(user, pageable);
 
         return ResponseEntity.ok(success(myReviews));
     }
