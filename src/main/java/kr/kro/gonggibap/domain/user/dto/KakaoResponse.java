@@ -73,6 +73,7 @@ public class KakaoResponse implements OAuth2Response {
                 .email(email)
                 .name(RandomNicknameGenerator.generateRandomNickname())
                 .userRole(UserRole.USER)
+                .score(0L)
                 .build();
     }
 }
