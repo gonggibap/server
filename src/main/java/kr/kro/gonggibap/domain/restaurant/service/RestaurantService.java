@@ -56,6 +56,7 @@ public class RestaurantService {
      * @param pageable
      * @return RestaurantPageResponse response
      */
+
     public PageResponse<?> getRestaurants(List<BigDecimal> latitudes, List<BigDecimal> longitudes, String category, String search, Pageable pageable) {
 
         Page<RestaurantResponse> restaurantResponses = Page.empty();
@@ -66,6 +67,8 @@ public class RestaurantService {
             parseResult = parseQuery(search);
             String district = parseResult.get(0);
             String food = parseResult.get(1);
+
+            log.info("District: {} / Food: {}", district, food);
 
             // 식당 이름 검색
             if (!StringUtils.hasText(district)) { 
