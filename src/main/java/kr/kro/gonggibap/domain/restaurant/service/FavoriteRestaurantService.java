@@ -1,12 +1,15 @@
 package kr.kro.gonggibap.domain.restaurant.service;
 
 import kr.kro.gonggibap.core.error.ErrorCode;
+import kr.kro.gonggibap.core.error.PageResponse;
 import kr.kro.gonggibap.core.exception.CustomException;
 import kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantResponse;
 import kr.kro.gonggibap.domain.restaurant.entity.FavoriteRestaurant;
 import kr.kro.gonggibap.domain.restaurant.entity.Restaurant;
 import kr.kro.gonggibap.domain.restaurant.repository.FavoriteRestaurantRepository;
 import kr.kro.gonggibap.domain.user.entity.User;
+import kr.kro.gonggibap.domain.user.repository.UserRepository;
+import kr.kro.gonggibap.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -24,6 +27,7 @@ import java.util.List;
 public class FavoriteRestaurantService {
     private final FavoriteRestaurantRepository favoriteRestaurantRepository;
     private final RestaurantService restaurantService;
+    private final UserRepository userRepository;
 
     /**
      * 로그인 한 사용자가 식당 ID를 통해 좋아요 로직을 수행함
@@ -74,6 +78,25 @@ public class FavoriteRestaurantService {
      */
     public Page<RestaurantResponse> getFavoritePagingList(final User user, final Pageable pageable) {
         return favoriteRestaurantRepository.findByPagingUser(user.getId(), pageable);
+    }
+
+    public Page<RestaurantResponse> getFavoriteCategoryPagingList(User user, String category, Pageable pageable) {
+        return favoriteRestaurantRepository.findByCategoryPagingUser(user.getId(), category, pageable);
+    }
+
+    public PageResponse<?> getFavoriteRestaurants(final Long userId, final String category, Pageable pageable) {
+        User user = userRepository.findById(userId).orElseThrow();
+
+        Page<RestaurantResponse> restaurantResponses;
+        // 카테고리가 없는 경우
+        if (category == null) {
+            restaurantResponses = getFavoritePagingList(user, pageable);
+        } else {
+            // 카테고리가 있는 경우
+            restaurantResponses = getFavoriteCategoryPagingList(user, category, pageable);
+        }
+        return new PageResponse<>(restaurantResponses.getTotalPages(),
+                restaurantResponses.getContent());
     }
 
     /**
