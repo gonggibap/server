@@ -22,7 +22,13 @@ public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {
             "LEFT JOIN r.histories h " +
             "LEFT JOIN h.publicOffice p " +
             "WHERE (:polygon IS NULL OR FUNCTION('ST_Contains', FUNCTION('ST_GeomFromText', :polygon, 4326), r.location) = true) " +
-            "AND (:category IS NULL OR r.detailCategory = :category) " +
+            "AND (" +
+            "  CASE WHEN :category = '음식점' THEN " +
+            "    (r.detailCategory NOT IN ('술집', '카페', '간식')) " +
+            "  ELSE " +
+            "    (:category IS NULL OR r.detailCategory = :category) " +
+            "  END" +
+            ") " +
             "GROUP BY r.id " +
             "ORDER BY COUNT(distinct h) desc")
     Page<RestaurantResponse> getRestaurants(String polygon, String category, Pageable pageable);
@@ -35,9 +41,16 @@ public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {
             "FROM Restaurant r " +
             "LEFT JOIN r.histories h " +
             "LEFT JOIN h.publicOffice p " +
-            "WHERE (:category IS NULL OR r.detailCategory = :category) " +
+            "WHERE (" +
+            "  CASE WHEN :category = '음식점' THEN " +
+            "    (r.detailCategory NOT IN ('술집', '카페', '간식')) " +
+            "  ELSE " +
+            "    (:category IS NULL OR r.detailCategory = :category) " +
+            "  END" +
+            ") " +
             "GROUP BY r.id " +
             "ORDER BY COUNT(distinct h) desc")
+
     Page<RestaurantResponse> getRestaurantsWithCategory(String category, Pageable pageable);
 
 
