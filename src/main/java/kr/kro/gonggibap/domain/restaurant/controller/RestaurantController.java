@@ -71,15 +71,22 @@ public class RestaurantController implements RestaurantControllerSwagger {
         RestaurantWithImageResponse response = restaurantService.getRestaurant(id);
         return ResponseEntity.ok(success(response));
     }
-
-    @GetMapping("/blog")
-    public ResponseEntity<?> getRestaurantBlogPost(@RequestParam(required = true) Long restaurantId) {
+    
+    /**
+     * 식당 ID로 포털 내 블로그 글 조회
+     *
+     * @param restaurantId
+     * @return
+     */
+    @GetMapping("/blog/{restaurantId}")
+    public ResponseEntity<?> getRestaurantBlogPost(@PathVariable Long restaurantId) {
         // BlogPost 리스트를 가져옴
         List<BlogPost> response = restaurantBlogService.searchBlogPostWithAPI(restaurantId);
 
         // API 응답에 블로그 포스트 리스트를 포함하여 반환
         return ResponseEntity.ok(success(response));
     }
+
 
 
 
