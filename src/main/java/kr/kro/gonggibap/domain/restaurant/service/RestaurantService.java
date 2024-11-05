@@ -72,13 +72,13 @@ public class RestaurantService {
 
             // 식당 이름 검색
             if (!StringUtils.hasText(district)) { 
-                restaurantResponses = restaurantRepository.searchRestaurantByFood(food, pageable);
+                restaurantResponses = restaurantRepository.searchRestaurantByFood(food, category, pageable);
             // 지역 검색
             } else if (!StringUtils.hasText(food)) {
-                restaurantResponses = restaurantRepository.searchRestaurantByDistrict(district, pageable);
+                restaurantResponses = restaurantRepository.searchRestaurantByDistrict(district, category, pageable);
             // 식당 + 지역 검색
             } else {
-                restaurantResponses = restaurantRepository.searchRestaurantByFoodAndDistrict(food, district, pageable);
+                restaurantResponses = restaurantRepository.searchRestaurantByFoodAndDistrict(food, district, category, pageable);
             }
         // 현재 위치 지도 조회
         } else if (latitudes != null && longitudes != null){
