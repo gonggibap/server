@@ -85,7 +85,7 @@ public class RestaurantService {
                 restaurantResponses = restaurantRepository.searchRestaurantByFoodAndDistrict(food, district, pageable);
             }
         // 현재 위치 지도 조회
-        } else if (latitudes == null && longitudes == null && search != null && category != null) {
+        } else if (latitudes == null && longitudes == null && search == null) {
             restaurantResponses = restaurantRepository.getRestaurantsWithCategory(category, pageable);
         } else if (latitudes != null && longitudes != null) {
             validateCoordinate(latitudes, longitudes);
@@ -96,7 +96,6 @@ public class RestaurantService {
                     .append(latitudes.get(2)).append(" ").append(longitudes.get(2)).append(", ")
                     .append(latitudes.get(3)).append(" ").append(longitudes.get(3)).append(", ")
                     .append(latitudes.get(0)).append(" ").append(longitudes.get(0)).append("))");
-
             try {
                 restaurantResponses = restaurantRepository.getRestaurants(polygon.toString(), category, pageable);
             } catch (Exception e) {
