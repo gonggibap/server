@@ -52,4 +52,17 @@ public interface FavoriteRestaurantRepository extends JpaRepository<FavoriteRest
             "AND f.restaurant.id = :restaurantId")
     boolean existsByUserAndRestaurant(@Param("userId") Long userId, @Param("restaurantId") Long restaurantId);
 
+    @Query(value = "SELECT new kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantResponse(r.id, r.restaurantName, r.phone, r.link, r.category, r.detailCategory, r.addressName, r.roadAddressName, r.latitude, r.longitude, h.publicOffice.id, p.name, COUNT(distinct h), AVG(rev.point)) " +
+            "FROM FavoriteRestaurant fr " +
+            "JOIN fr.restaurant r " +
+            "LEFT JOIN r.histories h " +
+            "LEFT JOIN r.reviews rev " +
+            "LEFT JOIN h.publicOffice p " +
+            "WHERE fr.user.id = :userId " +
+            "and fr.restaurant.detailCategory = :category " +
+            "GROUP BY r.id " +
+            "ORDER BY COUNT(distinct h) desc")
+    Page<RestaurantResponse> findByCategoryPagingUser(@Param("userId") Long userId,
+                                                      @Param("category") String category,
+                                                      Pageable pageable);
 }
