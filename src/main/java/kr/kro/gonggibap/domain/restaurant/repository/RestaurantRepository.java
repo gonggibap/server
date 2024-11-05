@@ -21,7 +21,7 @@ public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {
             "FROM Restaurant r " +
             "LEFT JOIN r.histories h " +
             "LEFT JOIN h.publicOffice p " +
-            "WHERE FUNCTION('ST_Contains', FUNCTION('ST_GeomFromText', :polygon, 4326), r.location) = true " +
+            "WHERE :polygon IS NULL OR FUNCTION('ST_Contains', FUNCTION('ST_GeomFromText', :polygon, 4326), r.location) = true " +
             "AND (" +
             "  CASE WHEN :category = '음식점' THEN " +
             "    (r.detailCategory NOT IN ('술집', '카페', '간식')) " +
