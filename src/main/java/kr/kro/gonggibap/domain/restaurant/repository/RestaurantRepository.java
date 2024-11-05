@@ -57,9 +57,9 @@ public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {
             "LEFT JOIN r.histories h " +
             "LEFT JOIN r.reviews rev " +
             "LEFT JOIN h.publicOffice p " +
-            "WHERE FUNCTION('match_against', r.restaurantName, :food) > 0 " +  // Check if the relevance score is positive
+            "WHERE FUNCTION('match_against_natural', r.restaurantName, :food) > 0 " +  // Check if the relevance score is positive
             "GROUP BY r.id " +
-            "ORDER BY COUNT(distinct h) desc")
+            "ORDER BY FUNCTION('match_against_natural', r.restaurantName, :food) desc")
     Page<RestaurantResponse> searchRestaurantByFood(String food, Pageable pageable);
 
     /**
@@ -74,9 +74,9 @@ public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {
             "LEFT JOIN r.histories h " +
             "LEFT JOIN r.reviews rev " +
             "LEFT JOIN h.publicOffice p " +
-            "WHERE FUNCTION('match_against', r.addressName, :district) > 0 " +  // Check if the relevance score is positive
+            "WHERE FUNCTION('match_against_boolean', r.addressName, :district) > 0 " +  // Check if the relevance score is positive
             "GROUP BY r.id " +
-            "ORDER BY COUNT(distinct h) desc")
+            "ORDER BY FUNCTION('match_against_boolean', r.addressName, :district) desc")
     Page<RestaurantResponse> searchRestaurantByDistrict(String district, Pageable pageable);
 
     /**
@@ -91,10 +91,10 @@ public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {
             "LEFT JOIN r.histories h " +
             "LEFT JOIN r.reviews rev " +
             "LEFT JOIN h.publicOffice p " +
-            "WHERE FUNCTION('match_against', r.restaurantName, :food) > 0 " +  // 음식 이름으로 검색
-            "AND FUNCTION('match_against', r.addressName, :district) > 0 " +  // 주소로 검색
+            "WHERE FUNCTION('match_against_natural', r.restaurantName, :food) > 0 " +  // 음식 이름으로 검색
+            "AND FUNCTION('match_against_boolean', r.addressName, :district) > 0 " +  // 주소로 검색
             "GROUP BY r.id " +
-            "ORDER BY COUNT(distinct h) desc")
+            "ORDER BY FUNCTION('match_against_boolean', r.addressName, :district) desc, FUNCTION('match_against_natural', r.restaurantName, :food) desc")
     Page<RestaurantResponse> searchRestaurantByFoodAndDistrict(String food, String district, Pageable pageable);
 
 }
