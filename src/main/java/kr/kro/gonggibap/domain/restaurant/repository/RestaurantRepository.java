@@ -21,11 +21,24 @@ public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {
             "FROM Restaurant r " +
             "LEFT JOIN r.histories h " +
             "LEFT JOIN h.publicOffice p " +
-            "WHERE FUNCTION('ST_Contains', FUNCTION('ST_GeomFromText', :polygon, 4326), r.location) = true " +
+            "WHERE (:polygon IS NULL OR FUNCTION('ST_Contains', FUNCTION('ST_GeomFromText', :polygon, 4326), r.location) = true) " +
             "AND (:category IS NULL OR r.detailCategory = :category) " +
             "GROUP BY r.id " +
             "ORDER BY COUNT(distinct h) desc")
     Page<RestaurantResponse> getRestaurants(String polygon, String category, Pageable pageable);
+
+    @Query(value = "SELECT new kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantResponse(" +
+            "r.id, r.restaurantName, r.phone, r.link, r.category, r.detailCategory, r.addressName, r.roadAddressName, " +
+            "r.latitude, r.longitude, h.publicOffice.id, p.name, " +
+            "CAST((SELECT COUNT(DISTINCT h2) FROM History h2 WHERE h2.restaurant.id = r.id) AS long), " +
+            "CAST((SELECT AVG(rev.point) FROM Review rev WHERE rev.restaurant.id = r.id) AS double)) " +
+            "FROM Restaurant r " +
+            "LEFT JOIN r.histories h " +
+            "LEFT JOIN h.publicOffice p " +
+            "WHERE (:category IS NULL OR r.detailCategory = :category) " +
+            "GROUP BY r.id " +
+            "ORDER BY COUNT(distinct h) desc")
+    Page<RestaurantResponse> getRestaurantsWithCategory(String category, Pageable pageable);
 
 
     @Query(value = "SELECT new kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantWithImageResponse(" +
@@ -58,10 +71,9 @@ public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {
             "LEFT JOIN r.reviews rev " +
             "LEFT JOIN h.publicOffice p " +
             "WHERE FUNCTION('match_against_natural', r.restaurantName, :food) > 0 " +  // Check if the relevance score is positive
-            "AND (:category IS NULL OR r.detailCategory = :category) " +
             "GROUP BY r.id " +
             "ORDER BY FUNCTION('match_against_natural', r.restaurantName, :food) desc")
-    Page<RestaurantResponse> searchRestaurantByFood(String food, String category, Pageable pageable);
+    Page<RestaurantResponse> searchRestaurantByFood(String food, Pageable pageable);
 
     /**
      * N-gram 기반 fulltext index를 restaurants 구 기준으로 검색
@@ -76,10 +88,9 @@ public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {
             "LEFT JOIN r.reviews rev " +
             "LEFT JOIN h.publicOffice p " +
             "WHERE FUNCTION('match_against_boolean', r.addressName, :district) > 0 " +  // Check if the relevance score is positive
-            "AND (:category IS NULL OR r.detailCategory = :category) " +
             "GROUP BY r.id " +
             "ORDER BY FUNCTION('match_against_boolean', r.addressName, :district) desc")
-    Page<RestaurantResponse> searchRestaurantByDistrict(String district, String category, Pageable pageable);
+    Page<RestaurantResponse> searchRestaurantByDistrict(String district, Pageable pageable);
 
     /**
      * N-gram 기반 fulltext index를 restaurants food, 구 기준으로 검색
@@ -95,9 +106,8 @@ public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {
             "LEFT JOIN h.publicOffice p " +
             "WHERE FUNCTION('match_against_natural', r.restaurantName, :food) > 0 " +  // 음식 이름으로 검색
             "AND FUNCTION('match_against_boolean', r.addressName, :district) > 0 " +  // 주소로 검색
-            "AND (:category IS NULL OR r.detailCategory = :category) " +
             "GROUP BY r.id " +
             "ORDER BY FUNCTION('match_against_boolean', r.addressName, :district) desc, FUNCTION('match_against_natural', r.restaurantName, :food) desc")
-    Page<RestaurantResponse> searchRestaurantByFoodAndDistrict(String food, String district, String category, Pageable pageable);
+    Page<RestaurantResponse> searchRestaurantByFoodAndDistrict(String food, String district, Pageable pageable);
 
 }
