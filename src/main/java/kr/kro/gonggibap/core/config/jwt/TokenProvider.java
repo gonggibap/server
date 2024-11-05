@@ -26,6 +26,7 @@ import java.util.Set;
 @Slf4j
 @Service
 public class TokenProvider {
+    private final static String TOKEN_PREFIX = "Bearer ";
 
     private final JwtProperties jwtProperties;
 
@@ -70,10 +71,10 @@ public class TokenProvider {
                     .setSigningKey(jwtProperties.getSecretKey().getBytes(StandardCharsets.UTF_8)) // 서명 검증
                     .parseClaimsJws(token); // 클레임이란 받아온 정보(토큰)를 jwt 페이로드에 넣는 것이다.
 
-            log.info("secret key: {}",jwtProperties.getSecretKey());
+            log.info("secret key: {}", jwtProperties.getSecretKey());
 
             return true;
-        } catch(Exception e) {
+        } catch (Exception e) {
             log.info("failed to validate token: {}", e.getMessage());
             return false;
         }
@@ -108,6 +109,14 @@ public class TokenProvider {
                 .setSigningKey(jwtProperties.getSecretKey().getBytes(StandardCharsets.UTF_8)) // 서명 검증
                 .parseClaimsJws(token)
                 .getBody();
+    }
+
+    public String getAccessToken(String authorzationHeader) {
+        // 토큰의 접두사를 제거하고 값을 돌려준다.
+        if (authorzationHeader != null && authorzationHeader.startsWith(TOKEN_PREFIX)) {
+            return authorzationHeader.substring(TOKEN_PREFIX.length());
+        }
+        return null;
     }
 
 }
