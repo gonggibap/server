@@ -31,7 +31,7 @@ public class UserService {
         return userRepository.findByEmail(email).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_EXISTS));
     }
 
-    public UserDto findById(final Long id) {
+    public User findById(final Long id) {
         Optional<User> user = userRepository.findById(id);
 
         // ID 값으로 유저를 찾을 수 없는 경우
@@ -40,7 +40,7 @@ public class UserService {
             throw new CustomException(ErrorCode.USER_NOT_EXISTS);
         }
 
-        return UserDto.of(user.get());
+        return user.get();
     }
 
     public UserMyPageDto getUserInfo(final User user) {
