@@ -10,6 +10,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.math.BigDecimal;
@@ -33,10 +34,12 @@ public interface RestaurantControllerSwagger {
     })
     @GetMapping()
     ResponseEntity<?> getRestaurants(@RequestParam(required = false) List<BigDecimal> latitudes,
-                                     @RequestParam(required = false) List<BigDecimal> longitudes,
-                                     @RequestParam(required = false) String category,
-                                     @RequestParam(required = false) String search,
-                                     @PageableDefault(page = 0, size = 30) Pageable pageable);
+                                            @RequestParam(required = false) List<BigDecimal> longitudes,
+                                            @RequestParam(required = false) String category,
+                                            @RequestParam(required = false) String search,
+                                            @RequestParam(required = false) boolean favorite,
+                                            @RequestHeader(required = false) String token,
+                                            @PageableDefault(page = 0, size = 30) Pageable pageable);
 
     @Operation(
             summary = "식당 단일 조회", description = "식당 ID 대한 정보를 조회함")
