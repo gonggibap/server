@@ -85,7 +85,7 @@ public class RestaurantService {
                 restaurantResponses = restaurantRepository.searchRestaurantByFoodAndDistrict(food, district, pageable);
             }
         // 현재 위치 지도 조회
-        } else if (latitudes == null && longitudes == null && search != null && category != null) {
+        } else if (latitudes == null && longitudes == null && search == null && category != null) {
             restaurantResponses = restaurantRepository.getRestaurantsWithCategory(category, pageable);
         } else if (latitudes != null && longitudes != null) {
             validateCoordinate(latitudes, longitudes);
