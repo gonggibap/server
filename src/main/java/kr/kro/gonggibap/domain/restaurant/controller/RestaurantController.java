@@ -1,8 +1,10 @@
 package kr.kro.gonggibap.domain.restaurant.controller;
 
+import kr.kro.gonggibap.core.config.jwt.TokenProvider;
 import kr.kro.gonggibap.core.error.PageResponse;
 import kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantResponse;
 import kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantWithImageResponse;
+import kr.kro.gonggibap.domain.restaurant.service.FavoriteRestaurantService;
 import kr.kro.gonggibap.domain.restaurant.service.RestaurantService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,9 +22,11 @@ import static kr.kro.gonggibap.core.error.CommonResponse.success;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/restaurants")
-public class RestaurantController implements RestaurantControllerSwagger{
+public class RestaurantController implements RestaurantControllerSwagger {
 
     private final RestaurantService restaurantService;
+    private final TokenProvider tokenProvider;
+    private final FavoriteRestaurantService favoriteRestaurantService;
 
     /**
      * 범위 내 식당 조회
@@ -38,14 +42,26 @@ public class RestaurantController implements RestaurantControllerSwagger{
                                             @RequestParam(required = false) List<BigDecimal> longitudes,
                                             @RequestParam(required = false) String category,
                                             @RequestParam(required = false) String search,
+                                            @RequestParam(required = false) boolean favorite,
+                                            @RequestHeader(name = "Authorization", required = false) String token,
                                             @PageableDefault(page = 0, size = 30) Pageable pageable) {
+        PageResponse<?> response = null;
 
-        PageResponse<?> response = restaurantService.getRestaurants(latitudes, longitudes, category, search, pageable);
+        // 로그인 된 사용자이면서 좋아요 목록을 호출한 경우
+        if (token != null && favorite) {
+            log.info("로그인 된 사용자 입니다.");
+            Long userId = tokenProvider.getUserId(tokenProvider.getAccessToken(token));
+            response = favoriteRestaurantService.getFavoriteRestaurants(userId, category, pageable);
+        } else {
+            log.info("비회원인 사용자 입니다.");
+            response = restaurantService.getRestaurants(latitudes, longitudes, category, search, pageable);
+        }
         return ResponseEntity.ok(response);
     }
 
     /**
      * 식당 ID 단일 조회
+     *
      * @param id
      * @return
      */
