@@ -62,7 +62,6 @@ public class ImageS3UploadService {
                 amazonS3.putObject(bucket, newFilename, file.getInputStream(), metadata);
                 return amazonS3.getUrl(bucket, newFilename).toString();
             } catch (IOException e) {
-                log.error("Failed to upload file to S3", e);
                 throw new CustomException(ErrorCode.FILE_UPLOAD_ERROR);
             }
         }).toList();
@@ -89,9 +88,7 @@ public class ImageS3UploadService {
 
         try {
             DeleteObjectsResult result = amazonS3.deleteObjects(deleteObjectsRequest);
-            log.info("Deleted files: {}", result.getDeletedObjects());
         } catch (Exception e) {
-            log.error("Failed to delete files from S3", e);
             throw new CustomException(ErrorCode.FILE_DELETE_ERROR);
         }
 
