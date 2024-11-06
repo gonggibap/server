@@ -57,4 +57,22 @@ public interface RestaurantControllerSwagger {
     })
     @GetMapping("/{id}")
     ResponseEntity<?> getRestaurant(@PathVariable Long id);
+
+    @Operation(
+            summary = "식당 관련 블로그 포스트 조회", description = "식당 ID로 블로그 포스트 조회")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "조회 성공",
+                    content = @Content(mediaType = "application/json")
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "주어진 ID와 일치하는 식당이 없음",
+                    content = @Content(mediaType = "application/json")
+            )
+    })
+    @GetMapping("/{restaurantId}/blog")
+    ResponseEntity<?> getRestaurantBlogPost(@PathVariable Long restaurantId);
+
 }
