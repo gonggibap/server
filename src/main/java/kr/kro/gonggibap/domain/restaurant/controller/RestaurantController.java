@@ -2,7 +2,7 @@ package kr.kro.gonggibap.domain.restaurant.controller;
 
 import kr.kro.gonggibap.core.config.jwt.TokenProvider;
 import kr.kro.gonggibap.core.error.PageResponse;
-import kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantBlogResponse.BlogPost;
+import kr.kro.gonggibap.domain.restaurant.dto.BlogPost;
 import kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantWithImageResponse;
 import kr.kro.gonggibap.domain.restaurant.service.FavoriteRestaurantService;
 import kr.kro.gonggibap.domain.restaurant.service.RestaurantBlogService;
@@ -78,7 +78,7 @@ public class RestaurantController implements RestaurantControllerSwagger {
      * @param restaurantId
      * @return
      */
-    @GetMapping("/blog/{restaurantId}")
+    @GetMapping("/{restaurantId}/blog")
     public ResponseEntity<?> getRestaurantBlogPost(@PathVariable Long restaurantId) {
         // BlogPost 리스트를 가져옴
         List<BlogPost> response = restaurantBlogService.searchBlogPostWithAPI(restaurantId);
@@ -86,9 +86,4 @@ public class RestaurantController implements RestaurantControllerSwagger {
         // API 응답에 블로그 포스트 리스트를 포함하여 반환
         return ResponseEntity.ok(success(response));
     }
-
-
-
-
-
 }

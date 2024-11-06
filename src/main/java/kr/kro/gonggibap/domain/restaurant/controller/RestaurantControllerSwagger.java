@@ -72,7 +72,7 @@ public interface RestaurantControllerSwagger {
                     content = @Content(mediaType = "application/json")
             )
     })
-    @GetMapping("{restaurantId}")
+    @GetMapping("/{restaurantId}/blog")
     ResponseEntity<?> getRestaurantBlogPost(@PathVariable Long restaurantId);
 
 }
