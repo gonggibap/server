@@ -16,7 +16,7 @@ public class RestaurantBlogResponse {
     private Meta meta; // 메타 정보 필드
     private List<BlogPost> documents; // BlogPost 리스트
 
-    // Meta 클래스 정의
+    // 카카오 API 메타데이터
     @Getter
     @AllArgsConstructor
     @NoArgsConstructor
