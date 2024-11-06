@@ -50,9 +50,7 @@ public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {
             ") " +
             "GROUP BY r.id " +
             "ORDER BY COUNT(distinct h) desc")
-
     Page<RestaurantResponse> getRestaurantsWithCategory(String category, Pageable pageable);
-
 
     @Query(value = "SELECT new kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantWithImageResponse(" +
             "r.id, r.restaurantName, r.phone, r.link, r.category, r.detailCategory, r.addressName, r.roadAddressName, " +
@@ -123,4 +121,15 @@ public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {
             "ORDER BY FUNCTION('match_against_boolean', r.addressName, :district) desc, FUNCTION('match_against_natural', r.restaurantName, :food) desc")
     Page<RestaurantResponse> searchRestaurantByFoodAndDistrict(String food, String district, Pageable pageable);
 
+    @Query(value = "SELECT new kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantResponse(" +
+            "r.id, r.restaurantName, r.phone, r.link, r.category, r.detailCategory, r.addressName, r.roadAddressName, " +
+            "r.latitude, r.longitude, h.publicOffice.id, p.name, " +
+            "CAST((SELECT COUNT(DISTINCT h2) FROM History h2 WHERE h2.restaurant.id = r.id) AS long), " +
+            "CAST((SELECT AVG(rev.point) FROM Review rev WHERE rev.restaurant.id = r.id) AS double)) " +
+            "FROM Restaurant r " +
+            "LEFT JOIN r.histories h " +
+            "LEFT JOIN h.publicOffice p " +
+            "GROUP BY r.id " +
+            "ORDER BY COUNT(distinct h) desc")
+    Page<RestaurantResponse> getRestaurantAll(Pageable pageable);
 }

@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -58,16 +59,11 @@ public class RestaurantService {
      */
 
     public PageResponse<?> getRestaurants(List<BigDecimal> latitudes, List<BigDecimal> longitudes, String category, String search, Pageable pageable) {
-
-        if(latitudes == null && longitudes == null && category == null && search == null) {
-            throw new CustomException(PARAMETER_MISSING_ERROR);
-        }
-
         Page<RestaurantResponse> restaurantResponses = Page.empty();
         List<String> parseResult = new ArrayList<>();
 
         // 검색 로직
-        if(latitudes == null && longitudes == null && search != null && category == null) {
+        if (latitudes == null && longitudes == null && search != null && category == null) {
             parseResult = parseQuery(search);
             String district = parseResult.get(0);
             String food = parseResult.get(1);
@@ -75,18 +71,22 @@ public class RestaurantService {
             log.info("District: {} / Food: {}", district, food);
 
             // 식당 이름 검색
-            if (!StringUtils.hasText(district)) { 
+            if (!StringUtils.hasText(district)) {
                 restaurantResponses = restaurantRepository.searchRestaurantByFood(food, pageable);
-            // 지역 검색
+                // 지역 검색
             } else if (!StringUtils.hasText(food)) {
                 restaurantResponses = restaurantRepository.searchRestaurantByDistrict(district, pageable);
-            // 식당 + 지역 검색
+                // 식당 + 지역 검색
             } else {
                 restaurantResponses = restaurantRepository.searchRestaurantByFoodAndDistrict(food, district, pageable);
             }
-        // 현재 위치 지도 조회
+            // 현재 위치 지도 조회
         } else if (latitudes == null && longitudes == null && search == null) {
-            restaurantResponses = restaurantRepository.getRestaurantsWithCategory(category, pageable);
+            if (category == null) {
+                restaurantResponses = restaurantRepository.getRestaurantAll(pageable);
+            } else {
+                restaurantResponses = restaurantRepository.getRestaurantsWithCategory(category, pageable);
+            }
         } else if (latitudes != null && longitudes != null) {
             validateCoordinate(latitudes, longitudes);
 
@@ -108,7 +108,7 @@ public class RestaurantService {
     }
 
     public RestaurantWithImageResponse getRestaurant(Long id) {
-        return  restaurantRepository.getRestaurantById(id, baseUrl)
+        return restaurantRepository.getRestaurantById(id, baseUrl)
                 .orElseThrow(() -> new CustomException(NOT_FOUND_RESTAURANT));
 
 
@@ -116,6 +116,7 @@ public class RestaurantService {
 
     /**
      * restaurantId를 기반으로 해당 아이디를 가진 엔티티가 존재하는지 확인하는 메소드
+     *
      * @param restaurantId
      * @return
      */
