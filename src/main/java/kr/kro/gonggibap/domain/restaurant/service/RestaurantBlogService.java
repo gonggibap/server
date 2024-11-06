@@ -29,7 +29,7 @@ public class RestaurantBlogService {
     private final RestTemplate restTemplate;
     private final RestaurantRepository restaurantRepository;
 
-    @Value("${kakao.apikey}")
+    @Value("${spring.security.oauth2.client.registration.kakao.client-id}")
     private String apiKey;
 
     public List<BlogPost> searchBlogPostWithAPI(Long restaurantId) { // 반환 타입 수정
