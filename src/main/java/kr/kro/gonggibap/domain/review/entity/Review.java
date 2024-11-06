@@ -71,6 +71,11 @@ public class Review {
         }
     }
 
+    public void updateReview(String content, Double point) {
+        this.content = content;
+        this.point = point;
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) return true;

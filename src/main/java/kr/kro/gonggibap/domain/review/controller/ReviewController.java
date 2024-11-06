@@ -3,8 +3,10 @@ package kr.kro.gonggibap.domain.review.controller;
 import jakarta.validation.Valid;
 import kr.kro.gonggibap.core.annotation.LoginUser;
 import kr.kro.gonggibap.domain.review.dto.request.ReviewCreateRequest;
+import kr.kro.gonggibap.domain.review.dto.request.ReviewUpdateRequest;
 import kr.kro.gonggibap.domain.review.dto.response.ReviewCreateResponse;
 import kr.kro.gonggibap.domain.review.dto.response.ReviewResponse;
+import kr.kro.gonggibap.domain.review.dto.response.ReviewUpdateResponse;
 import kr.kro.gonggibap.domain.review.service.ReviewService;
 import kr.kro.gonggibap.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
@@ -53,6 +55,23 @@ public class ReviewController implements ReviewControllerSwagger{
 
         return ResponseEntity.ok(success(new ReviewCreateResponse(reviewId)));
     }
+
+    /**
+     * 리뷰 수정
+     * @param user
+     * @param request 리뷰 ID, 리뷰 내용, 리뷰 점수, 이미지
+     * @return
+     */
+    @PutMapping(value = "/{reviewId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> updateReview(@LoginUser User user,
+                                          @PathVariable Long reviewId,
+                                          @Valid @ModelAttribute ReviewUpdateRequest request) {
+
+        Long updateReviewId = reviewService.updateReview(request, reviewId, user);
+
+        return ResponseEntity.ok(success(new ReviewUpdateResponse(updateReviewId)));
+    }
+
 
     /**
      * 리뷰 삭제
