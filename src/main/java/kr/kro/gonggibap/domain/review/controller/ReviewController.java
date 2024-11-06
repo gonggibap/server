@@ -62,7 +62,7 @@ public class ReviewController implements ReviewControllerSwagger{
      * @param request 리뷰 ID, 리뷰 내용, 리뷰 점수, 이미지
      * @return
      */
-    @PatchMapping(value = "/{reviewId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/{reviewId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateReview(@LoginUser User user,
                                           @PathVariable Long reviewId,
                                           @Valid @ModelAttribute ReviewUpdateRequest request) {
