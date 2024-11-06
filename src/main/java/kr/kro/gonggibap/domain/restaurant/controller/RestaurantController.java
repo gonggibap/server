@@ -1,7 +1,9 @@
 package kr.kro.gonggibap.domain.restaurant.controller;
 
 import kr.kro.gonggibap.core.config.jwt.TokenProvider;
+import kr.kro.gonggibap.core.error.ErrorCode;
 import kr.kro.gonggibap.core.error.PageResponse;
+import kr.kro.gonggibap.core.exception.CustomException;
 import kr.kro.gonggibap.domain.restaurant.dto.BlogPost;
 import kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantWithImageResponse;
 import kr.kro.gonggibap.domain.restaurant.service.FavoriteRestaurantService;
@@ -49,8 +51,13 @@ public class RestaurantController implements RestaurantControllerSwagger {
         PageResponse<?> response = null;
 
         // 로그인 된 사용자이면서 좋아요 목록을 호출한 경우
-        if (token != null && favorite) {
-            log.info("로그인 된 사용자 입니다.");
+        if (favorite) {
+            if (token == null) {
+                log.info("로그인하지 않은 사용자 입니다.");
+                throw new CustomException(ErrorCode.NOT_AUTHORIZATION);
+            }
+
+            // 로그인 한 사람
             Long userId = tokenProvider.getUserId(tokenProvider.getAccessToken(token));
             response = favoriteRestaurantService.getFavoriteRestaurants(userId, category, pageable);
         } else {
