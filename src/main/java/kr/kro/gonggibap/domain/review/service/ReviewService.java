@@ -3,11 +3,13 @@ package kr.kro.gonggibap.domain.review.service;
 import kr.kro.gonggibap.core.error.ErrorCode;
 import kr.kro.gonggibap.core.exception.CustomException;
 import kr.kro.gonggibap.domain.image.entity.Image;
+import kr.kro.gonggibap.domain.image.repository.ImageRepository;
 import kr.kro.gonggibap.domain.image.service.ImageS3UploadService;
 import kr.kro.gonggibap.domain.image.service.ImageService;
 import kr.kro.gonggibap.domain.restaurant.entity.Restaurant;
 import kr.kro.gonggibap.domain.restaurant.service.RestaurantService;
 import kr.kro.gonggibap.domain.review.dto.request.ReviewCreateRequest;
+import kr.kro.gonggibap.domain.review.dto.request.ReviewUpdateRequest;
 import kr.kro.gonggibap.domain.review.dto.response.ReviewResponse;
 import kr.kro.gonggibap.domain.review.entity.Review;
 import kr.kro.gonggibap.domain.review.repository.ReviewRepository;
@@ -36,6 +38,7 @@ public class ReviewService {
     private final ImageService imageService;
     private final RestaurantService restaurantService;
     private final ReviewRepository reviewRepository;
+    private final ImageRepository imageRepository;
 
     /**
      * 리뷰 작성 메소드
@@ -71,6 +74,66 @@ public class ReviewService {
 
         return savedReview.getId();
     }
+
+    /**
+     * 리뷰 수정 메소드
+     * S3에 등록되어있는 이미지 중 현재 request에 들어온 이미지가 아닌 이미지는 삭제
+     * 새로운 이미지 S3에 등록
+     * images 테이블에 있는 기존 이미지 삭제 후 새로운 이미지 등록
+     *
+     * @param request
+     * @param reviewId
+     * @param user
+     * @return
+     */
+    @Transactional
+    public Long updateReview(ReviewUpdateRequest request, Long reviewId, User user) {
+
+        // reviewId로 기존 리뷰 조회
+        Review findByReviewId = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_REVIEW));
+
+        // 권한 확인
+        findByReviewId.validatePermission(user.getId());
+
+        // reviewId로 imageRepository에서 image 조회
+        List<Image> findImageByReviewId = imageRepository.findByReviewId(reviewId);
+
+        // S3에 올라와 있는 해당 이미지(image_url로 확인)를 삭제
+        if (!CollectionUtils.isEmpty(findImageByReviewId)) {
+            findImageByReviewId.forEach(image -> {
+                try {
+                    imageS3UploadService.deleteReviewFile(image.getImageUrl());
+                } catch (Exception e) {
+                    throw new CustomException(ErrorCode.FILE_UPLOAD_ERROR);
+                }
+            });
+        }
+
+        // images테이블에서 reviewId로 검색되는 칼럼 다 삭제
+        imageRepository.deleteAll(findImageByReviewId);
+
+        // 리뷰 수정 내용 반영
+        findByReviewId.updateReview(request.getContent(), request.getPoint());
+
+        // 수정 시 첨부한 이미지가 있을 시 S3에 새로 업로드
+        List<MultipartFile> images = request.getImages();
+        if (!CollectionUtils.isEmpty(images)) {
+            List<String> imageUrls = images.stream()
+                    .map(image -> {
+                        try {
+                            return imageS3UploadService.saveReviewFile(image);
+                        } catch (IOException e) {
+                            throw new CustomException(ErrorCode.FILE_UPLOAD_ERROR);
+                        }
+                    }).toList();
+
+            imageService.createImages(findByReviewId, imageUrls);
+        }
+
+        return findByReviewId.getId();
+    }
+
 
     /**
      * 특정 식당에 대한 리뷰 전체 조회 메소드
@@ -121,4 +184,5 @@ public class ReviewService {
         List<Review> reviews = reviewRepository.findPageByUserIdWithImages(user.getId(), pageable);
         return getMyReviewResponses(user, reviews);
     }
+
 }
