@@ -33,21 +33,6 @@ public class ImageS3UploadService {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-    public String saveReviewFile(MultipartFile multipartFile) throws IOException {
-        String originalFilename = multipartFile.getOriginalFilename();
-        String timestamp = new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date());
-
-        String encodedFilename = URLEncoder.encode(originalFilename, StandardCharsets.UTF_8.name());
-        String newFilename = "review/" + timestamp + "_" + originalFilename;
-
-        ObjectMetadata metadata = new ObjectMetadata();
-        metadata.setContentLength(multipartFile.getSize());
-        metadata.setContentType(multipartFile.getContentType());
-
-        amazonS3.putObject(bucket, newFilename, multipartFile.getInputStream(), metadata);
-        return amazonS3.getUrl(bucket, newFilename).toString();
-    }
-
     public List<String> saveReviewFiles(List<MultipartFile> files) {
         return files.stream().map(file -> {
             try {
@@ -65,14 +50,6 @@ public class ImageS3UploadService {
                 throw new CustomException(ErrorCode.FILE_UPLOAD_ERROR);
             }
         }).toList();
-    }
-
-    public void deleteReviewFile(String fileUrl) {
-        String splitStr = ".com/";
-        String fileName = fileUrl.substring(fileUrl.lastIndexOf(splitStr) + splitStr.length());
-
-        String decodedFileName = URLDecoder.decode(fileName, StandardCharsets.UTF_8);
-        amazonS3.deleteObject(new DeleteObjectRequest(bucket, decodedFileName));
     }
 
     public void deleteReviewFiles(List<String> fileUrls) {
