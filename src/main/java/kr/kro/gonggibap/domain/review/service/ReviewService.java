@@ -55,17 +55,9 @@ public class ReviewService {
         Review savedReview = reviewRepository.save(new Review(request.getContent(), request.getPoint(), user, findRestaurant));
         List<MultipartFile> images = request.getImages();
 
-        // 첨부한 이미지가 있는 경우에만 S3에 업로드
+        // 첨부된 여러 이미지가 있을 경우 S3에 한 번의 요청으로 업로드
         if (!CollectionUtils.isEmpty(images)) {
-            List<String> imageUrls = images.stream()
-                    .map(image -> {
-                        try {
-                            return imageS3UploadService.saveReviewFile(image);
-                        } catch (IOException e) {
-                            throw new CustomException(ErrorCode.FILE_UPLOAD_ERROR);
-                        }
-                    }).toList();
-
+            List<String> imageUrls = imageS3UploadService.saveReviewFiles(images);
             imageService.createImages(savedReview, imageUrls);
         }
 
@@ -99,15 +91,14 @@ public class ReviewService {
         // reviewId로 imageRepository에서 image 조회
         List<Image> findImageByReviewId = imageRepository.findByReviewId(reviewId);
 
+        // 기존 이미지의 URL 리스트 추출
+        List<String> existingImageUrls = findImageByReviewId.stream()
+                .map(Image::getImageUrl)
+                .toList();
+
         // S3에 올라와 있는 해당 이미지(image_url로 확인)를 삭제
-        if (!CollectionUtils.isEmpty(findImageByReviewId)) {
-            findImageByReviewId.forEach(image -> {
-                try {
-                    imageS3UploadService.deleteReviewFile(image.getImageUrl());
-                } catch (Exception e) {
-                    throw new CustomException(ErrorCode.FILE_UPLOAD_ERROR);
-                }
-            });
+        if (!CollectionUtils.isEmpty(existingImageUrls)) {
+            imageS3UploadService.deleteReviewFiles(existingImageUrls);
         }
 
         // images테이블에서 reviewId로 검색되는 칼럼 다 삭제
@@ -119,16 +110,8 @@ public class ReviewService {
         // 수정 시 첨부한 이미지가 있을 시 S3에 새로 업로드
         List<MultipartFile> images = request.getImages();
         if (!CollectionUtils.isEmpty(images)) {
-            List<String> imageUrls = images.stream()
-                    .map(image -> {
-                        try {
-                            return imageS3UploadService.saveReviewFile(image);
-                        } catch (IOException e) {
-                            throw new CustomException(ErrorCode.FILE_UPLOAD_ERROR);
-                        }
-                    }).toList();
-
-            imageService.createImages(findByReviewId, imageUrls);
+            List<String> newImageUrls = imageS3UploadService.saveReviewFiles(images);
+            imageService.createImages(findByReviewId, newImageUrls);
         }
 
         return findByReviewId.getId();
@@ -163,8 +146,16 @@ public class ReviewService {
 
         review.validatePermission(user.getId());
 
+        // 리뷰에 연결된 모든 이미지 URL 추출
         List<Image> images = review.getImages();
-        images.forEach(image -> imageS3UploadService.deleteReviewFile(image.getImageUrl()));
+        List<String> imageUrls = images.stream()
+                .map(Image::getImageUrl)
+                .toList();
+
+        // S3에서 여러 이미지 URL을 한 번에 삭제
+        if (!CollectionUtils.isEmpty(imageUrls)) {
+            imageS3UploadService.deleteReviewFiles(imageUrls);
+        }
 
         reviewRepository.deleteById(reviewId);
 
