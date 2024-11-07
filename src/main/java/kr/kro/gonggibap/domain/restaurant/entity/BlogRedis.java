@@ -8,7 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import kr.kro.gonggibap.domain.restaurant.dto.BlogPost;
+import kr.kro.gonggibap.domain.restaurant.dto.BlogPostDto;
 
 @Getter
 @RedisHash(value = "blog", timeToLive = 3600 * 24) // 1일
@@ -17,5 +17,5 @@ import kr.kro.gonggibap.domain.restaurant.dto.BlogPost;
 public class BlogRedis {
     @Id // 수정된 부분
     private String restaurantId;
-    private List<BlogPost> documents;
+    private List<BlogPostDto> documents;
 }

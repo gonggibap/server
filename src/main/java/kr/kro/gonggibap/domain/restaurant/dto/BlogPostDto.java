@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class BlogPost {
+public class BlogPostDto {
     private String title; // 제목
     private String contents; // 내용
     private String url; // URL

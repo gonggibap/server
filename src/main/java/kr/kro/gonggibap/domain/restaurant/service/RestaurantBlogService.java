@@ -1,8 +1,7 @@
 package kr.kro.gonggibap.domain.restaurant.service;
 
-import kr.kro.gonggibap.core.error.ErrorCode;
 import kr.kro.gonggibap.core.exception.CustomException;
-import kr.kro.gonggibap.domain.restaurant.dto.BlogPost;
+import kr.kro.gonggibap.domain.restaurant.dto.BlogPostDto;
 import kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantBlogResponse;
 import kr.kro.gonggibap.domain.restaurant.entity.BlogRedis;
 import kr.kro.gonggibap.domain.restaurant.entity.Restaurant;
@@ -20,7 +19,6 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
-import java.time.Duration;
 import java.util.List;
 
 import static kr.kro.gonggibap.core.error.ErrorCode.NOT_FOUND_RESTAURANT;
@@ -44,7 +42,7 @@ public class RestaurantBlogService {
      * @param restaurantId
      * @return
      */
-    public List<BlogPost> searchBlogPostWithAPI(Long restaurantId) {
+    public List<BlogPostDto> searchBlogPostWithAPI(Long restaurantId) {
 
         // Redis에서 캐시된 데이터 확인
         BlogRedis cachedBlogPosts = blogRedisRepository.findById(restaurantId.toString()).orElse(null);
@@ -59,7 +57,7 @@ public class RestaurantBlogService {
         Restaurant r = restaurantRepository.findById(restaurantId)
                 .orElseThrow(() -> new CustomException(NOT_FOUND_RESTAURANT));
 
-        String restaurantQuery = String.join("", r.getRestaurantName(), r.getAddressName());
+        String restaurantQuery = String.join(" ", r.getRestaurantName(), r.getAddressName());
 
         // URL 구성
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(KAKAO_SEARCH_BLOG_URL)
@@ -83,12 +81,12 @@ public class RestaurantBlogService {
         );
 
         // documents만 추출
-        List<BlogPost> blogPosts = response.getBody().getDocuments();
+        List<BlogPostDto> blogPostDtos = response.getBody().getDocuments();
 
         // Redis에 저장 (1일 동안 캐싱)
-        BlogRedis blogRedis = new BlogRedis(restaurantId.toString(), blogPosts);
+        BlogRedis blogRedis = new BlogRedis(restaurantId.toString(), blogPostDtos);
         blogRedisRepository.save(blogRedis);
 
-        return blogPosts;
+        return blogPostDtos;
     }
 }

@@ -4,7 +4,7 @@ import kr.kro.gonggibap.core.config.jwt.TokenProvider;
 import kr.kro.gonggibap.core.error.ErrorCode;
 import kr.kro.gonggibap.core.error.PageResponse;
 import kr.kro.gonggibap.core.exception.CustomException;
-import kr.kro.gonggibap.domain.restaurant.dto.BlogPost;
+import kr.kro.gonggibap.domain.restaurant.dto.BlogPostDto;
 import kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantWithImageResponse;
 import kr.kro.gonggibap.domain.restaurant.service.FavoriteRestaurantService;
 import kr.kro.gonggibap.domain.restaurant.service.RestaurantBlogService;
@@ -88,7 +88,7 @@ public class RestaurantController implements RestaurantControllerSwagger {
     @GetMapping("/{restaurantId}/blog")
     public ResponseEntity<?> getRestaurantBlogPost(@PathVariable Long restaurantId) {
         // BlogPost 리스트를 가져옴
-        List<BlogPost> response = restaurantBlogService.searchBlogPostWithAPI(restaurantId);
+        List<BlogPostDto> response = restaurantBlogService.searchBlogPostWithAPI(restaurantId);
 
         // API 응답에 블로그 포스트 리스트를 포함하여 반환
         return ResponseEntity.ok(success(response));
