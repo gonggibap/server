@@ -32,7 +32,7 @@ public class HistoryController implements HistoryControllerSwagger {
      */
     @GetMapping("/{restaurantId}")
     public ResponseEntity<?> getHistory(@PathVariable Long restaurantId,
-                                        @PageableDefault(page = 0, size = 10) Pageable pageable) {
+                                        @PageableDefault(page = 0, size = 5) Pageable pageable) {
         PageResponse<HistoryResponse> response = historyService.getHistory(restaurantId, pageable);
 
 
