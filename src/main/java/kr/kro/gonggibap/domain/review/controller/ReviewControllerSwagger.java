@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import kr.kro.gonggibap.core.annotation.LoginUser;
 import kr.kro.gonggibap.domain.review.dto.request.ReviewCreateRequest;
+import kr.kro.gonggibap.domain.review.dto.request.ReviewUpdateRequest;
 import kr.kro.gonggibap.domain.user.entity.User;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -74,7 +75,24 @@ public interface ReviewControllerSwagger {
             @ApiResponse(responseCode = "401", description = "로그인이 필요합니다.", content = @Content(mediaType = "application/json"))
     })
     @GetMapping("/my")
-    ResponseEntity<?> getMyReviews(@LoginUser User user, Pageable pageable);
-    
-    
+    ResponseEntity<?> getMyReviews(@Parameter(hidden = true) @LoginUser User user,
+                                   Pageable pageable);
+
+    @Operation(summary = "리뷰 수정",
+            description = "로그인한 사용자가 작성한 리뷰 수정",
+            parameters = {
+                    @Parameter(name = AUTHORIZATION, description = "access token", in = ParameterIn.HEADER, required = true)
+            }
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "수정 성공", content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "400", description = "파일 업로드 실패", content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "400", description = "리뷰 내용은 필수", content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "400", description = "리뷰 점수는 필수", content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "404", description = "식당을 찾을 수 없습니다.", content = @Content(mediaType = "application/json"))
+    })
+    @PutMapping("{reviewId}")
+    ResponseEntity<?> updateReview(@Parameter(hidden = true) @LoginUser User user,
+                                   @PathVariable Long reviewId,
+                                   @Valid @ModelAttribute ReviewUpdateRequest request);
 }
