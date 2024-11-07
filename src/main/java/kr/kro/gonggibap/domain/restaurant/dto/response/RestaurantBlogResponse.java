@@ -1,7 +1,6 @@
 package kr.kro.gonggibap.domain.restaurant.dto.response;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import kr.kro.gonggibap.domain.restaurant.dto.BlogPost;
+import kr.kro.gonggibap.domain.restaurant.dto.BlogPostDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,7 +13,7 @@ import java.util.List;
 public class RestaurantBlogResponse {
 
     private Meta meta; // 메타 정보 필드
-    private List<BlogPost> documents; // BlogPost 리스트
+    private List<BlogPostDto> documents; // BlogPost 리스트
 
     // 카카오 API 메타데이터
     @Getter

@@ -1,10 +1,11 @@
 package kr.kro.gonggibap.domain.restaurant.service;
 
-import kr.kro.gonggibap.core.error.ErrorCode;
 import kr.kro.gonggibap.core.exception.CustomException;
-import kr.kro.gonggibap.domain.restaurant.dto.BlogPost; // BlogPost import
+import kr.kro.gonggibap.domain.restaurant.dto.BlogPostDto;
 import kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantBlogResponse;
+import kr.kro.gonggibap.domain.restaurant.entity.BlogRedis;
 import kr.kro.gonggibap.domain.restaurant.entity.Restaurant;
+import kr.kro.gonggibap.domain.restaurant.repository.BlogRedisRepository;
 import kr.kro.gonggibap.domain.restaurant.repository.RestaurantRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,52 +26,67 @@ import static kr.kro.gonggibap.core.error.ErrorCode.NOT_FOUND_RESTAURANT;
 @Slf4j
 @RequiredArgsConstructor
 @Service
-
-
-/**
- * 카카오 API를 사용해 블로그 포스트 가져옴
- *
- * @param restaurantId
- * @return RestaurantPageResponse response
- */
 public class RestaurantBlogService {
     private static final String KAKAO_SEARCH_BLOG_URL = "https://dapi.kakao.com/v2/search/blog";
     private final RestTemplate restTemplate;
     private final RestaurantRepository restaurantRepository;
+    private final BlogRedisRepository blogRedisRepository;
 
     @Value("${spring.security.oauth2.client.registration.kakao.client-id}")
     private String apiKey;
 
-    public List<BlogPost> searchBlogPostWithAPI(Long restaurantId) { // 반환 타입 수정
+    /**
+     * KAKAO API를 활용해 블로그 글을 가져오는 로직
+     * Redis를 캐시로 활용하여 API 호출을 효율적으로 진행(캐시 갱신 주기 = 1일)
+     *
+     * @param restaurantId
+     * @return
+     */
+    public List<BlogPostDto> searchBlogPostWithAPI(Long restaurantId) {
 
-        // ID를 가지고 restaurant 추출
+        // Redis에서 캐시된 데이터 확인
+        BlogRedis cachedBlogPosts = blogRedisRepository.findById(restaurantId.toString()).orElse(null);
+
+        if (cachedBlogPosts != null) {
+            // Redis에 캐시된 데이터가 있는 경우
+            log.info("Redis에서 블로그 포스트 캐시 데이터 가져옴");
+            return cachedBlogPosts.getDocuments();
+        }
+
+        // Redis에 캐시된 데이터가 없는 경우 - API 요청 수행
         Restaurant r = restaurantRepository.findById(restaurantId)
                 .orElseThrow(() -> new CustomException(NOT_FOUND_RESTAURANT));
 
-        String restaurantQuery = String.join("", r.getRestaurantName(), r.getAddressName());
-//        log.info("name: {}, address:{}", r.getRestaurantName(), r.getAddressName());
+        String restaurantQuery = String.join(" ", r.getRestaurantName(), r.getAddressName());
 
-// URL 구성
+        // URL 구성
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(KAKAO_SEARCH_BLOG_URL)
                 .queryParam("query", restaurantQuery)
                 .queryParam("sort", "accuracy")
                 .queryParam("size", 3); // 최대 3개의 결과만 가져옴
 
-// URI 객체 생성
+        // URI 객체 생성
         URI uri = builder.build().encode().toUri();
 
-// Header 세팅
+        // Header 세팅
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "KakaoAK " + apiKey);
 
-// HttpEntity 생성
+        // HttpEntity 생성
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
-// 요청 전송
+        // 요청 전송
         ResponseEntity<RestaurantBlogResponse> response = restTemplate.exchange(
                 uri, HttpMethod.GET, entity, RestaurantBlogResponse.class
         );
-        // documents만 추출하여 반환
-        return response.getBody().getDocuments();
+
+        // documents만 추출
+        List<BlogPostDto> blogPostDtos = response.getBody().getDocuments();
+
+        // Redis에 저장 (1일 동안 캐싱)
+        BlogRedis blogRedis = new BlogRedis(restaurantId.toString(), blogPostDtos);
+        blogRedisRepository.save(blogRedis);
+
+        return blogPostDtos;
     }
 }
