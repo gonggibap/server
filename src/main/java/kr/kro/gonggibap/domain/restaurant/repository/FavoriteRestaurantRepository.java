@@ -59,7 +59,13 @@ public interface FavoriteRestaurantRepository extends JpaRepository<FavoriteRest
             "LEFT JOIN r.reviews rev " +
             "LEFT JOIN h.publicOffice p " +
             "WHERE fr.user.id = :userId " +
-            "and fr.restaurant.detailCategory = :category " +
+            "AND (" +
+            "  CASE WHEN :category = '음식점' THEN " +
+            "    (r.detailCategory NOT IN ('술집', '카페', '간식')) " +
+            "  ELSE " +
+            "    (:category IS NULL OR r.detailCategory = :category) " +
+            "  END" +
+            ") " +
             "GROUP BY r.id " +
             "ORDER BY COUNT(distinct h) desc")
     Page<RestaurantResponse> findByCategoryPagingUser(@Param("userId") Long userId,
