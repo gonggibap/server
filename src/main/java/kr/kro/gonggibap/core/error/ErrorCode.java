@@ -48,6 +48,7 @@ public enum ErrorCode {
 
     // S3
     FILE_UPLOAD_ERROR(HttpStatus.BAD_REQUEST, HttpStatus.BAD_REQUEST.value(), "잘못된 업로드 파일 형식입니다."),
+    FILE_DELETE_ERROR(HttpStatus.BAD_REQUEST, HttpStatus.BAD_REQUEST.value(), "삭제하려는 파일이 존재하지 않습니다."),
 
     // 파라미터 누락
     PARAMETER_MISSING_ERROR(HttpStatus.BAD_REQUEST, HttpStatus.BAD_REQUEST.value(), "필수 파라미터 값이 누락되었습니다."),
