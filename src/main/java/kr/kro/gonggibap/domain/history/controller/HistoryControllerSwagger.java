@@ -23,5 +23,5 @@ public interface HistoryControllerSwagger {
     })
     @GetMapping("/{restaurantId}")
     ResponseEntity<?> getHistory(@PathVariable Long restaurantId,
-                                 @PageableDefault(page = 0, size = 10) Pageable pageable);
+                                 @PageableDefault(page = 0, size = 5) Pageable pageable);
 }
