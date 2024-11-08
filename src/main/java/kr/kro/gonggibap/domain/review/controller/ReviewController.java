@@ -2,6 +2,7 @@ package kr.kro.gonggibap.domain.review.controller;
 
 import jakarta.validation.Valid;
 import kr.kro.gonggibap.core.annotation.LoginUser;
+import kr.kro.gonggibap.core.error.PageResponse;
 import kr.kro.gonggibap.domain.review.dto.request.ReviewCreateRequest;
 import kr.kro.gonggibap.domain.review.dto.request.ReviewUpdateRequest;
 import kr.kro.gonggibap.domain.review.dto.response.ReviewCreateResponse;
@@ -12,6 +13,7 @@ import kr.kro.gonggibap.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -35,8 +37,9 @@ public class ReviewController implements ReviewControllerSwagger{
      * @return
      */
     @GetMapping("/restaurant/{id}")
-    public ResponseEntity<?> getReviews(@PathVariable Long id) {
-        List<ReviewResponse> reviews = reviewService.getReviews(id);
+    public ResponseEntity<?> getReviews(@PathVariable Long id,
+                                        @PageableDefault(page = 0, size = 5) Pageable pageable) {
+        PageResponse reviews = reviewService.getReviews(id, pageable);
 
         return ResponseEntity.ok(success(reviews));
     }

@@ -1,6 +1,7 @@
 package kr.kro.gonggibap.domain.review.service;
 
 import kr.kro.gonggibap.core.error.ErrorCode;
+import kr.kro.gonggibap.core.error.PageResponse;
 import kr.kro.gonggibap.core.exception.CustomException;
 import kr.kro.gonggibap.domain.image.entity.Image;
 import kr.kro.gonggibap.domain.image.repository.ImageRepository;
@@ -16,6 +17,7 @@ import kr.kro.gonggibap.domain.review.repository.ReviewRepository;
 import kr.kro.gonggibap.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -124,12 +126,15 @@ public class ReviewService {
      * @param restaurantId
      * @return
      */
-    public List<ReviewResponse> getReviews(Long restaurantId) {
+    public PageResponse getReviews(Long restaurantId, Pageable pageable) {
         restaurantService.findRestaurantById(restaurantId);
 
-        List<Review> reviews = reviewRepository.findAllByRestaurantIdWithImages(restaurantId);
+        Page<Review> reviewPages = reviewRepository.findAllByRestaurantIdWithImages(restaurantId, pageable);
 
-        return getReviewResponses(reviews);
+
+        List<ReviewResponse> reviews = getReviewResponses(reviewPages.getContent());
+
+        return new PageResponse(reviewPages.getTotalPages(), reviews);
     }
 
     /**

@@ -13,6 +13,7 @@ import kr.kro.gonggibap.domain.review.dto.request.ReviewCreateRequest;
 import kr.kro.gonggibap.domain.review.dto.request.ReviewUpdateRequest;
 import kr.kro.gonggibap.domain.user.entity.User;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,7 +30,8 @@ public interface ReviewControllerSwagger {
             @ApiResponse(responseCode = "404", description = "식당을 찾을 수 없습니다.", content = @Content(mediaType = "application/json"))
     })
     @GetMapping("/restaurant/{id}")
-    ResponseEntity<?> getReviews(@PathVariable Long id);
+    ResponseEntity<?> getReviews(@PathVariable Long id,
+                                 @PageableDefault(page = 0, size = 5) Pageable pageable);
 
     @Operation(summary = "리뷰 작성",
             description = "로그인한 사용자가 식당 리뷰 작성",
