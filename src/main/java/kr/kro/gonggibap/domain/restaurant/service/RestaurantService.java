@@ -108,36 +108,7 @@ public class RestaurantService {
                     .append(latitudes.get(0)).append(" ").append(longitudes.get(0)).append("))");
             try {
                 log.info("Polygon: {}", polygon);
-                // 1. 기본 데이터 가져오기 (히스토리 카운트 제외)
-                Data<?> data = getRestaurantsWithMBR(polygon.toString(), category, pageable);
-                List<RestaurantResponse> restaurantsWithMBR = data.content;
-                long totalPages = data.pageSize;
-
-                // 2. 레스토랑 ID 목록 생성
-                List<Long> restaurantIds = restaurantsWithMBR.stream()
-                        .map(RestaurantResponse::getRestaurantId)
-                        .toList();
-
-                // 3. 히스토리 카운트 가져오기
-                List<HistoryCountDto> historyCounts = historyRepository.findHistoryCounts(restaurantIds);
-
-                // 4. 히스토리 카운트를 Map으로 변환
-                Map<Long, Long> historyCountMap = historyCounts.stream()
-                        .collect(Collectors.toMap(HistoryCountDto::getRestaurantId, HistoryCountDto::getHistoryCount));
-
-                // 5. RestaurantResponse에 히스토리 카운트 추가
-                restaurantsWithMBR.forEach(restaurant ->
-                        restaurant.setVisitCount(historyCountMap.getOrDefault(restaurant.getRestaurantId(), 0L))
-                );
-
-                // 6. 정렬 (필요 시)
-                List<RestaurantResponse> sortedRestaurants = restaurantsWithMBR.stream()
-                        .sorted(Comparator.comparingLong(RestaurantResponse::getVisitCount).reversed())
-                        .collect(Collectors.toList());
-
-                // 7. 페이징 처리
-                return new PageResponse<>((int) totalPages,
-                        sortedRestaurants);
+                restaurantResponses = restaurantRepository.getRestaurants(polygon.toString(), category, pageable);
             } catch (Exception e) {
                 throw new CustomException(COORDINATE_OUT_OF_BOUND);
             }
@@ -161,35 +132,5 @@ public class RestaurantService {
      */
     public boolean existsById(Long restaurantId) {
         return restaurantRepository.existsById(restaurantId);
-    }
-
-    public Data<?> getRestaurantsWithMBR(String polygon, String category, Pageable pageable) {
-        Page<Object[]> results = restaurantRepository.searchWithMBR(polygon, category, pageable);
-
-        List<RestaurantResponse> content = results.getContent().stream()
-                .map(row -> new RestaurantResponse(
-                        ((Long) row[0]), // r.id
-                        (String) row[1],                  // r.restaurant_name
-                        (String) row[2],                  // r.phone
-                        (String) row[3],                  // r.link
-                        (String) row[4],                  // r.category
-                        (String) row[5],                  // r.detail_category
-                        (String) row[6],                  // r.address_name
-                        (String) row[7],                  // r.road_address_name
-                        ((BigDecimal) row[8]), // r.latitude
-                        ((BigDecimal) row[9]), // r.longitude
-                        ((Long) row[10]),  // h.public_office_id
-                        (String) row[11]                   // p.name
-                ))
-                .collect(Collectors.toList());
-
-        return new Data<>(results.getTotalPages(), content);
-    }
-
-    @lombok.Data
-    @AllArgsConstructor
-    static class Data<T> {
-        private int pageSize;
-        private List<RestaurantResponse> content;
     }
 }
