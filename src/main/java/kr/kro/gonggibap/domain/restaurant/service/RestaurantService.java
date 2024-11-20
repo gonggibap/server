@@ -1,9 +1,11 @@
 package kr.kro.gonggibap.domain.restaurant.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import kr.kro.gonggibap.core.config.amazon.sqs.SqsService;
 import kr.kro.gonggibap.core.error.PageResponse;
 import kr.kro.gonggibap.core.exception.CustomException;
 import kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantResponse;
-import kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantSearchResponse;
 import kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantWithImageResponse;
 import kr.kro.gonggibap.domain.restaurant.entity.Restaurant;
 import kr.kro.gonggibap.domain.restaurant.repository.RestaurantRepository;
@@ -11,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +22,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import static kr.kro.gonggibap.core.error.ErrorCode.*;
+import static kr.kro.gonggibap.core.error.ErrorCode.COORDINATE_OUT_OF_BOUND;
+import static kr.kro.gonggibap.core.error.ErrorCode.NOT_FOUND_RESTAURANT;
 import static kr.kro.gonggibap.domain.restaurant.service.validator.RestaurantQueryParser.parseQuery;
 import static kr.kro.gonggibap.domain.restaurant.service.validator.RestaurantValidator.validateCoordinate;
 
@@ -33,6 +35,8 @@ public class RestaurantService {
 
     private final RestaurantRepository restaurantRepository;
     private final AddressService addressService;
+    private final SqsService sqsService;
+    private final ObjectMapper objectMapper;
 
     @Value("${cloud.aws.base-url}")
     private String baseUrl;
@@ -58,7 +62,7 @@ public class RestaurantService {
      * @return RestaurantPageResponse response
      */
 
-    public PageResponse<?> getRestaurants(List<BigDecimal> latitudes, List<BigDecimal> longitudes, String category, String search, Pageable pageable) {
+    public PageResponse<?> getRestaurants(List<BigDecimal> latitudes, List<BigDecimal> longitudes, String category, String search, Pageable pageable) throws JsonProcessingException {
         Page<RestaurantResponse> restaurantResponses = Page.empty();
         List<String> parseResult = new ArrayList<>();
 
@@ -83,7 +87,8 @@ public class RestaurantService {
             // 현재 위치 지도 조회
         } else if (latitudes == null && longitudes == null && search == null) {
             if (category == null) {
-                restaurantResponses = restaurantRepository.getRestaurantAll(pageable);
+                String convertPageable = objectMapper.writeValueAsString(pageable);
+                sqsService.sendMessage(convertPageable);
             } else {
                 restaurantResponses = restaurantRepository.getRestaurantsWithCategory(category, pageable);
             }
