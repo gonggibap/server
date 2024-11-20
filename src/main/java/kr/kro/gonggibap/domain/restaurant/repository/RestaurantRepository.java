@@ -1,13 +1,13 @@
 package kr.kro.gonggibap.domain.restaurant.repository;
 
 import kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantResponse;
-import kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantSearchResponse;
 import kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantWithImageResponse;
 import kr.kro.gonggibap.domain.restaurant.entity.Restaurant;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
 
@@ -15,23 +15,19 @@ public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {
 
     @Query(value = "SELECT new kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantResponse(" +
             "r.id, r.restaurantName, r.phone, r.link, r.category, r.detailCategory, r.addressName, r.roadAddressName, " +
-            "r.latitude, r.longitude, h.publicOffice.id, p.name, " +
-            "CAST((SELECT COUNT(DISTINCT h2) FROM History h2 WHERE h2.restaurant.id = r.id) AS long), " +
-            "CAST((SELECT AVG(rev.point) FROM Review rev WHERE rev.restaurant.id = r.id) AS double)) " +
+            "r.latitude, r.longitude, h.publicOffice.id, p.name) " +
             "FROM Restaurant r " +
             "LEFT JOIN r.histories h " +
             "LEFT JOIN h.publicOffice p " +
             "WHERE (:polygon IS NULL OR FUNCTION('ST_Contains', FUNCTION('ST_GeomFromText', :polygon, 4326), r.location) = true) " +
-            "AND (" +
-            "  CASE WHEN :category = '음식점' THEN " +
-            "    (r.detailCategory NOT IN ('술집', '카페', '간식')) " +
-            "  ELSE " +
-            "    (:category IS NULL OR r.detailCategory = :category) " +
-            "  END" +
-            ") " +
-            "GROUP BY r.id " +
-            "ORDER BY COUNT(distinct h) desc")
-    Page<RestaurantResponse> getRestaurants(String polygon, String category, Pageable pageable);
+            "AND (:category IS NULL OR " +
+            "     (:category = '음식점' AND r.detailCategory NOT IN ('술집', '카페', '간식')) OR " +
+            "     r.detailCategory = :category) " +
+            "GROUP BY r.id")
+    Page<RestaurantResponse> getRestaurantsWithoutHistoryCount(
+            @Param("polygon") String polygon,
+            @Param("category") String category,
+            Pageable pageable);
 
     @Query(value = "SELECT new kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantResponse(" +
             "r.id, r.restaurantName, r.phone, r.link, r.category, r.detailCategory, r.addressName, r.roadAddressName, " +

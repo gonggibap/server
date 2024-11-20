@@ -2,6 +2,7 @@ package kr.kro.gonggibap.domain.history.repository;
 
 import kr.kro.gonggibap.domain.history.dto.response.HistoryResponse;
 import kr.kro.gonggibap.domain.history.entity.History;
+import kr.kro.gonggibap.domain.restaurant.dto.HistoryCountDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -27,5 +28,13 @@ public interface HistoryRepository extends JpaRepository<History, Long> {
             "WHERE r.id = :restaurantId " +
             "ORDER BY h.historyDate DESC")
     Page<HistoryResponse> findHistoryByRestaurantId(@Param("restaurantId") Long restaurantId, Pageable pageable);
+
+    @Query(value = "SELECT new kr.kro.gonggibap.domain.restaurant.dto.HistoryCountDto(" +
+            "h.restaurant.id, COUNT(DISTINCT h.id)) " +
+            "FROM History h " +
+            "WHERE h.restaurant.id IN :restaurantIds " +
+            "GROUP BY h.restaurant.id")
+    List<HistoryCountDto> findHistoryCounts(@Param("restaurantIds") List<Long> restaurantIds);
+
 
 }

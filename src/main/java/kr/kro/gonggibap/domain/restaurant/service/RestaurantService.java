@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.kro.gonggibap.core.error.PageResponse;
 import kr.kro.gonggibap.core.exception.CustomException;
+import kr.kro.gonggibap.domain.history.repository.HistoryRepository;
+import kr.kro.gonggibap.domain.restaurant.dto.HistoryCountDto;
 import kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantResponse;
 import kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantWithImageResponse;
 import kr.kro.gonggibap.domain.restaurant.entity.Restaurant;
@@ -19,7 +21,10 @@ import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static kr.kro.gonggibap.core.error.ErrorCode.COORDINATE_OUT_OF_BOUND;
 import static kr.kro.gonggibap.core.error.ErrorCode.NOT_FOUND_RESTAURANT;
@@ -35,6 +40,7 @@ public class RestaurantService {
     private final RestaurantRepository restaurantRepository;
     private final AddressService addressService;
     private final ObjectMapper objectMapper;
+    private final HistoryRepository historyRepository;
 
     @Value("${cloud.aws.base-url}")
     private String baseUrl;
@@ -99,7 +105,35 @@ public class RestaurantService {
                     .append(latitudes.get(3)).append(" ").append(longitudes.get(3)).append(", ")
                     .append(latitudes.get(0)).append(" ").append(longitudes.get(0)).append("))");
             try {
-                restaurantResponses = restaurantRepository.getRestaurants(polygon.toString(), category, pageable);
+                // 1. 기본 데이터 가져오기 (히스토리 카운트 제외)
+                restaurantResponses = restaurantRepository.getRestaurantsWithoutHistoryCount(polygon.toString(), category, pageable);
+                int totalPages = restaurantResponses.getTotalPages();
+
+                // 2. 레스토랑 ID 목록 생성
+                List<Long> restaurantIds = restaurantResponses.stream()
+                        .map(RestaurantResponse::getRestaurantId)
+                        .toList();
+
+                // 3. 히스토리 카운트 가져오기
+                List<HistoryCountDto> historyCounts = historyRepository.findHistoryCounts(restaurantIds);
+
+                // 4. 히스토리 카운트를 Map으로 변환
+                Map<Long, Long> historyCountMap = historyCounts.stream()
+                        .collect(Collectors.toMap(HistoryCountDto::getRestaurantId, HistoryCountDto::getHistoryCount));
+
+                // 5. RestaurantResponse에 히스토리 카운트 추가
+                restaurantResponses.forEach(restaurant ->
+                        restaurant.setVisitCount(historyCountMap.getOrDefault(restaurant.getRestaurantId(), 0L))
+                );
+
+                // 6. 정렬 (필요 시)
+                List<RestaurantResponse> sortedRestaurants = restaurantResponses.stream()
+                        .sorted(Comparator.comparingLong(RestaurantResponse::getVisitCount).reversed())
+                        .collect(Collectors.toList());
+
+                // 7. 페이징 처리
+                return new PageResponse<>(totalPages,
+                        sortedRestaurants);
             } catch (Exception e) {
                 throw new CustomException(COORDINATE_OUT_OF_BOUND);
             }
