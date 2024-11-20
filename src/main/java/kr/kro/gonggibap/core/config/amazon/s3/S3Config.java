@@ -1,4 +1,4 @@
-package kr.kro.gonggibap.core.config.s3;
+package kr.kro.gonggibap.core.config.amazon.s3;
 
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
