@@ -9,23 +9,29 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {
 
-    @Query(value = "SELECT r.restaurant_id, r.restaurant_name, r.phone, r.link, r.category, r.detail_category, " +
-            "r.address_name, r.road_address_name, r.latitude, r.longitude, " +
-            "h.public_office_id, p.name " +
-            "FROM restaurants r " +
-            "LEFT JOIN histories h ON r.restaurant_id = h.restaurant_id " +
-            "LEFT JOIN public_offices p ON p.public_office_id = h.public_office_id " +
-            "WHERE (:polygon IS NULL OR MBRContains(ST_GeomFromText(:polygon, 4326), r.location)) " +
-            "AND (:category IS NULL OR " +
-            "     (:category = '음식점' AND r.detail_category NOT IN ('술집', '카페', '간식')) OR " +
-            "     r.detail_category = :category)",
-            nativeQuery = true)
-    List<Object[]> searchWithMBR(@Param("polygon") String polygon, @Param("category") String category);
+    @Query(value = "SELECT new kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantResponse(" +
+            "r.id, r.restaurantName, r.phone, r.link, r.category, r.detailCategory, r.addressName, r.roadAddressName, " +
+            "r.latitude, r.longitude, h.publicOffice.id, p.name, " +
+            "CAST((SELECT COUNT(DISTINCT h2) FROM History h2 WHERE h2.restaurant.id = r.id) AS long), " +
+            "CAST((SELECT AVG(rev.point) FROM Review rev WHERE rev.restaurant.id = r.id) AS double)) " +
+            "FROM Restaurant r " +
+            "LEFT JOIN r.histories h " +
+            "LEFT JOIN h.publicOffice p " +
+            "WHERE (:polygon IS NULL OR FUNCTION('ST_Contains', FUNCTION('ST_GeomFromText', :polygon, 4326), r.location) = true) " +
+            "AND (" +
+            "  CASE WHEN :category = '음식점' THEN " +
+            "    (r.detailCategory NOT IN ('술집', '카페', '간식')) " +
+            "  ELSE " +
+            "    (:category IS NULL OR r.detailCategory = :category) " +
+            "  END" +
+            ") " +
+            "GROUP BY r.id " +
+            "ORDER BY COUNT(distinct h) desc")
+    Page<RestaurantResponse> getRestaurants(String polygon, String category, Pageable pageable);
 
     @Query(value = """
             SELECT COUNT(*)
