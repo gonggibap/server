@@ -2,7 +2,6 @@ package kr.kro.gonggibap.domain.restaurant.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import kr.kro.gonggibap.core.config.amazon.sqs.SqsService;
 import kr.kro.gonggibap.core.error.PageResponse;
 import kr.kro.gonggibap.core.exception.CustomException;
 import kr.kro.gonggibap.domain.restaurant.dto.response.RestaurantResponse;
@@ -35,7 +34,6 @@ public class RestaurantService {
 
     private final RestaurantRepository restaurantRepository;
     private final AddressService addressService;
-    private final SqsService sqsService;
     private final ObjectMapper objectMapper;
 
     @Value("${cloud.aws.base-url}")
@@ -87,8 +85,7 @@ public class RestaurantService {
             // 현재 위치 지도 조회
         } else if (latitudes == null && longitudes == null && search == null) {
             if (category == null) {
-                String convertPageable = objectMapper.writeValueAsString(pageable);
-                sqsService.sendMessage(convertPageable);
+                restaurantResponses = restaurantRepository.getRestaurantAll(pageable);
             } else {
                 restaurantResponses = restaurantRepository.getRestaurantsWithCategory(category, pageable);
             }
