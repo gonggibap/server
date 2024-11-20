@@ -1,5 +1,6 @@
 package kr.kro.gonggibap.domain.restaurant.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import kr.kro.gonggibap.core.config.jwt.TokenProvider;
 import kr.kro.gonggibap.core.error.ErrorCode;
 import kr.kro.gonggibap.core.error.PageResponse;
@@ -47,7 +48,7 @@ public class RestaurantController implements RestaurantControllerSwagger {
                                             @RequestParam(required = false) String search,
                                             @RequestParam(required = false) boolean favorite,
                                             @RequestHeader(name = "Authorization", required = false) String token,
-                                            @PageableDefault(page = 0, size = 30) Pageable pageable) {
+                                            @PageableDefault(page = 0, size = 30) Pageable pageable) throws JsonProcessingException {
         PageResponse<?> response = null;
 
         // 로그인 된 사용자이면서 좋아요 목록을 호출한 경우

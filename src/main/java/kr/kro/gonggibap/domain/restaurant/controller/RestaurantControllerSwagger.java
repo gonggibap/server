@@ -1,5 +1,6 @@
 package kr.kro.gonggibap.domain.restaurant.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -39,7 +40,7 @@ public interface RestaurantControllerSwagger {
                                             @RequestParam(required = false) String search,
                                             @RequestParam(required = false) boolean favorite,
                                             @RequestHeader(required = false) String token,
-                                            @PageableDefault(page = 0, size = 30) Pageable pageable);
+                                            @PageableDefault(page = 0, size = 30) Pageable pageable) throws JsonProcessingException;
 
     @Operation(
             summary = "식당 단일 조회", description = "식당 ID 대한 정보를 조회함")
