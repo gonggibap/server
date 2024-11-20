@@ -61,8 +61,6 @@ dependencies {
     // Swagger
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.1.0'
 
-    // Amazon SQS 의존성
-    implementation 'com.amazonaws:aws-java-sdk-sqs:1.12.778'
 
 }
 
